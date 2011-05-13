@@ -17,12 +17,12 @@
     <OutputPath>.\Help\</OutputPath>
     <HtmlHelpName>NReflect</HtmlHelpName>
     <Language>en-US</Language>
-    <HelpFileFormat>HtmlHelp1</HelpFileFormat>
+    <HelpFileFormat>MSHelpViewer</HelpFileFormat>
     <DocumentationSources>
       <DocumentationSource sourceFile="NReflect.csproj" xmlns="" />
     </DocumentationSources>
     <MissingTags>Summary, Parameter, Returns, AutoDocumentCtors, Namespace, TypeParameter, AutoDocumentDispose</MissingTags>
-    <VisibleItems>Attributes, InheritedMembers, InheritedFrameworkMembers, Internals, Privates, Protected, ProtectedInternalAsProtected, SealedProtected, PrivateFields</VisibleItems>
+    <VisibleItems>InheritedMembers, InheritedFrameworkMembers, Protected, SealedProtected</VisibleItems>
     <FrameworkVersion>4.0.30319</FrameworkVersion>
     <PresentationStyle>Prototype</PresentationStyle>
     <ComponentConfigurations>
@@ -64,6 +64,8 @@
     </NamespaceSummaries>
     <HelpTitle>NReflect</HelpTitle>
     <BinaryTOC>True</BinaryTOC>
+    <ProductTitle>NReflect</ProductTitle>
+    <VendorName>Malte Ried</VendorName>
   </PropertyGroup>
   <!-- There are no properties for these groups.  AnyCPU needs to appear in
        order for Visual Studio to perform the build.  The others are optional
