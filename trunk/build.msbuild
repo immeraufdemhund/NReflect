@@ -1,0 +1,68 @@
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
+  
+  <PropertyGroup>
+    <OutputPath>site\</OutputPath>
+	<ExportDir>export</ExportDir>
+	<BinDir>bin</BinDir>
+	<SrcZip>NReflect_v0.9_src.zip</SrcZip>
+  </PropertyGroup>
+  <ItemGroup>
+    <HtmlFiles Include="*.html" />
+    <WebSiteFiles Include="style.css" />
+	<ExportFiles Include="$(ExportDir)\**\*" />
+	<DocFiles Include="doc\*" />
+	<ProjectToBuild Include="src\NReflect.sln">
+      <Properties>Configuration=Release</Properties>
+    </ProjectToBuild>
+  </ItemGroup>
+  
+  <Target Name="Dist" DependsOnTargets="CreateBinZip;CreateSrcZip" />
+  
+  <Target Name="Build">
+    <MSBuild Projects="@(ProjectToBuild)" />
+  </Target>
+  
+  <Target Name="Clean" >
+    <MSBuild Projects="@(ProjectToBuild)" Targets="Clean" />
+  </Target>
+
+  <Target Name="Rebuild" DependsOnTargets="Clean;Build" />
+
+  <Target Name="BuildDocs">
+    <MSBuild Projects="src\NReflect\NReflect.shfbproj" Properties="HelpFileFormat=HtmlHelp1" />
+  </Target>
+  
+  <Target Name="CleanDocs">
+    <MSBuild Projects="src\NReflect\NReflect.shfbproj" Targets="Clean" />
+  </Target>
+  
+  <Target Name="RebuildDocs" DependsOnTargets="CleanDocs;BuildDocs" />
+  
+  <Target Name="CreateBinZip" DependsOnTargets="Rebuild;RebuildDocs">
+    <RemoveDir Directories="$(BinDir)" Condition="Exists('$(BinDir)')" />
+    <MakeDir Directories="$(BinDir)" />
+    <Copy DestinationFolder="$(BinDir)" SourceFiles="src\NReflect\bin\Release\NReflect.dll;src\NReflectRunner\bin\Release\NReflectRunner.exe" />
+    <Copy DestinationFolder="$(BinDir)" SourceFiles="src\NReflect\Help\NReflect.chm" />
+    <Copy DestinationFolder="$(BinDir)" SourceFiles="@(DocFiles)" />
+    <RemoveDir Directories="$(BinDir)" Condition="Exists('$(BinDir)')" />
+  </Target>
+  
+  <Target Name="CreateSrcZip" DependsOnTargets="Export">
+    <Zip Files="@(ExportFiles)" WorkingDirectory="$(ExportDir)\" ZipFileName="$(SrcZip)" />
+    <RemoveDir Directories="$(ExportDir)" Condition="Exists('$(ExportDir)')" />
+  </Target>
+
+  <Target Name="Export">
+    <RemoveDir Directories="$(ExportDir)" Condition="Exists('$(ExportDir)')" />
+    <SvnExport RepositoryPath="https://nreflect.svn.sourceforge.net/svnroot/nreflect/trunk/doc/" 
+               LocalPath="$(ExportDir)">
+    </SvnExport>
+    <SvnExport RepositoryPath="https://nreflect.svn.sourceforge.net/svnroot/nreflect/trunk/src/" 
+               LocalPath="$(ExportDir)" Arguments="--force" >
+      <Output TaskParameter="Revision" PropertyName="Revision" />
+    </SvnExport>
+    <Message Text="Revision: $(Revision)"/>
+  </Target>
+  
+</Project>

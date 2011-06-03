@@ -1,4 +1,5 @@
-﻿<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="4.0">
   <PropertyGroup>
     <!-- The configuration and platform will be used to determine which
          assemblies to include from solution and project documentation
@@ -7,7 +8,7 @@
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{2b079a95-059e-415f-9432-09fb285b0654}</ProjectGuid>
-    <SHFBSchemaVersion>1.9.0.0</SHFBSchemaVersion>
+    <SHFBSchemaVersion>1.9.3.0</SHFBSchemaVersion>
     <!-- AssemblyName, Name, and RootNamespace are not used by SHFB but Visual
          Studio adds them anyway -->
     <AssemblyName>Documentation</AssemblyName>
@@ -17,13 +18,13 @@
     <OutputPath>.\Help\</OutputPath>
     <HtmlHelpName>NReflect</HtmlHelpName>
     <Language>en-US</Language>
-    <HelpFileFormat>MSHelpViewer</HelpFileFormat>
+    <HelpFileFormat>HtmlHelp1</HelpFileFormat>
     <DocumentationSources>
       <DocumentationSource sourceFile="NReflect.csproj" xmlns="" />
     </DocumentationSources>
     <MissingTags>Summary, Parameter, Returns, AutoDocumentCtors, Namespace, TypeParameter, AutoDocumentDispose</MissingTags>
     <VisibleItems>InheritedMembers, InheritedFrameworkMembers, Protected, SealedProtected</VisibleItems>
-    <FrameworkVersion>4.0.30319</FrameworkVersion>
+    <FrameworkVersion>.NET 4.0.30319</FrameworkVersion>
     <PresentationStyle>Prototype</PresentationStyle>
     <ComponentConfigurations>
       <ComponentConfig id="Cached MSDN URL References" enabled="True" xmlns="">
