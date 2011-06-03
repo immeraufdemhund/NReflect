@@ -1,58 +1,86 @@
-<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Dist" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
   
   <PropertyGroup>
-    <OutputPath>site\</OutputPath>
+    <Version>0.9.0</Version>
 	<ExportDir>export</ExportDir>
 	<BinDir>bin</BinDir>
-	<SrcZip>NReflect_v0.9_src.zip</SrcZip>
+	<SrcZip>NReflect_v$(Version)_src.zip</SrcZip>
+	<BinZip>NReflect_v$(Version)_bin.zip</BinZip>
   </PropertyGroup>
+  
   <ItemGroup>
-    <HtmlFiles Include="*.html" />
-    <WebSiteFiles Include="style.css" />
-	<ExportFiles Include="$(ExportDir)\**\*" />
 	<DocFiles Include="doc\*" />
 	<ProjectToBuild Include="src\NReflect.sln">
       <Properties>Configuration=Release</Properties>
     </ProjectToBuild>
   </ItemGroup>
   
+  <!-- Do everything for distribution -->
   <Target Name="Dist" DependsOnTargets="CreateBinZip;CreateSrcZip" />
   
-  <Target Name="Build">
-    <MSBuild Projects="@(ProjectToBuild)" />
+  <!-- Update the assembly info file given within $(AssemblyInfoFile) with the current version from $(Version) -->
+  <Target Name="UpdateAssemblyInfo">
+    <FileUpdate Files="$(AssemblyInfoFile)"
+                Regex="(\[assembly\: AssemblyVersion\()\%22\d+\.\d+\.\d+\.\d+(\%22\)\])"
+                ReplacementText="$1%22$(Version).0$2" />
+    <FileUpdate Files="$(AssemblyInfoFile)"
+                Regex="(\[assembly\: AssemblyFileVersion\()\%22\d+\.\d+\.\d+\.\d+(\%22\)\])"
+                ReplacementText="$1%22$(Version).0$2" />
   </Target>
   
+  <!-- Build the project using the solution file -->
+  <Target Name="Build">
+    <MSBuild Projects ="$(MSBuildProjectFullPath)" Properties ="AssemblyInfoFile=src\NReflect\Properties\AssemblyInfo.cs" Targets="UpdateAssemblyInfo" />
+    <MSBuild Projects ="$(MSBuildProjectFullPath)" Properties ="AssemblyInfoFile=src\NReflectRunner\Properties\AssemblyInfo.cs" Targets="UpdateAssemblyInfo" />
+	<MSBuild Projects="@(ProjectToBuild)" />
+  </Target>
+  
+  <!-- Clean the project using the solution file -->
   <Target Name="Clean" >
     <MSBuild Projects="@(ProjectToBuild)" Targets="Clean" />
   </Target>
 
+  <!-- Rebuild the project using the solution file -->
   <Target Name="Rebuild" DependsOnTargets="Clean;Build" />
 
+  <!-- Build the documentation using sandcastle -->
   <Target Name="BuildDocs">
     <MSBuild Projects="src\NReflect\NReflect.shfbproj" Properties="HelpFileFormat=HtmlHelp1" />
   </Target>
   
+  <!-- Clean the documentation using sandcastle -->
   <Target Name="CleanDocs">
     <MSBuild Projects="src\NReflect\NReflect.shfbproj" Targets="Clean" />
   </Target>
   
+  <!-- Rebuild the documentation using sandcastle -->
   <Target Name="RebuildDocs" DependsOnTargets="CleanDocs;BuildDocs" />
-  
+
+  <!-- Create the binary distribution zip file -->  
   <Target Name="CreateBinZip" DependsOnTargets="Rebuild;RebuildDocs">
     <RemoveDir Directories="$(BinDir)" Condition="Exists('$(BinDir)')" />
     <MakeDir Directories="$(BinDir)" />
     <Copy DestinationFolder="$(BinDir)" SourceFiles="src\NReflect\bin\Release\NReflect.dll;src\NReflectRunner\bin\Release\NReflectRunner.exe" />
     <Copy DestinationFolder="$(BinDir)" SourceFiles="src\NReflect\Help\NReflect.chm" />
     <Copy DestinationFolder="$(BinDir)" SourceFiles="@(DocFiles)" />
+    <ItemGroup>
+	  <BinFiles Include="$(BinDir)\**\*" />
+    </ItemGroup>
+    <Zip Files="@(BinFiles)" WorkingDirectory="$(BinDir)\" ZipFileName="$(BinZip)" />
     <RemoveDir Directories="$(BinDir)" Condition="Exists('$(BinDir)')" />
   </Target>
   
+  <!-- Create the source distribution zip file -->
   <Target Name="CreateSrcZip" DependsOnTargets="Export">
+    <ItemGroup>
+	  <ExportFiles Include="$(ExportDir)\**\*" />
+    </ItemGroup>
     <Zip Files="@(ExportFiles)" WorkingDirectory="$(ExportDir)\" ZipFileName="$(SrcZip)" />
     <RemoveDir Directories="$(ExportDir)" Condition="Exists('$(ExportDir)')" />
   </Target>
 
+  <!-- Do an svn export for the source distribution -->
   <Target Name="Export">
     <RemoveDir Directories="$(ExportDir)" Condition="Exists('$(ExportDir)')" />
     <SvnExport RepositoryPath="https://nreflect.svn.sourceforge.net/svnroot/nreflect/trunk/doc/" 
