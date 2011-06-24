@@ -1,0 +1,113 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="51ae2c74-edd3-44cd-b666-b12639296cfb" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+      <para>Filters can be used to describe which types and members to reflect.</para>
+    </introduction>
+    <section address="SecOverview">
+      <title>Overview</title>
+      <content>
+        <para>
+          The following figure shows all types related to the filter system of
+          NReflect:
+        </para>
+        <mediaLink address="FigFilter">
+          <caption placement="after" lead="Figure 1">Class diagram showing the filters supplied with NReflect.</caption>
+          <image xlink:href="Filter"/>
+        </mediaLink>
+        <para>
+          A filter implements the 
+          <codeEntityReference qualifyHint="true">T:NReflect.Filter.IFilter</codeEntityReference>
+          interface.
+        </para>
+        <section>
+          <title>Creating a new filter</title>
+          <content>
+            <para>
+              If you want to create your own filter, just implement the
+              interface <codeEntityReference qualifyHint="true">T:NReflect.Filter.IFilter</codeEntityReference>
+              and provide an instance of your type to the
+              <codeEntityReference qualifyHint="true">M:NReflect.Reflector.Reflect(System.String,NReflect.Filter.IFilter@,System.Boolean)</codeEntityReference>
+              method. While reflecting, the methods will be called for every type and
+              member to reflect.
+            </para>
+          </content>
+        </section>
+        <section>
+          <title>Supplied filters</title>
+          <content>
+            <para>
+              The following three filters are supplied with NReflect:
+              <table>
+                <title>Supplied filters</title>
+                <tableHeader>
+                  <row>
+                    <entry><para>Filter name</para></entry>
+                    <entry><para>Description</para></entry>
+                  </row>
+                </tableHeader>
+				<row>
+                  <entry><para><codeEntityReference qualifyHint="true">T:NReflect.Filter.ReflectAllFilter</codeEntityReference></para></entry>
+				  <entry>
+				    <para>
+				    The most easy filter supplied is this one: If used, it will reflect
+				    everything without any exception.
+				    </para>
+				  </entry>
+				</row>
+                <row>
+                  <entry><para><codeEntityReference qualifyHint="true">T:NReflect.Filter.IncludeFilter</codeEntityReference></para></entry>
+                  <entry>
+                    <para>
+                      This filter takes a set of rules to determine which type and element
+                      to reflect. Each rule is an instance of the type
+                      <codeEntityReference qualifyHint="true">T:NReflect.Filter.FilterRule</codeEntityReference>.
+                    </para>
+                  </entry>
+			    </row>
+				<row>
+                  <entry><para><codeEntityReference qualifyHint="true">T:NReflect.Filter.InvertFilter</codeEntityReference></para></entry>
+				  <entry>
+				   	<para>
+				   	  This filter inverts the results of another filter. To create an excluding
+				   	  filter use the <codeEntityReference qualifyHint="false">T:NReflect.Filter.IncludeFilter</codeEntityReference>
+				   	  in conjunction with the <codeEntityReference qualifyHint="false">T:NReflect.Filter.InvertFilter</codeEntityReference>
+				   	  like this:
+		              <code language="C#">
+IncludeFilter includeFilter = new IncludeFilter();
+includeFilter.Rules.Add(new FilterRule(FilterModifiers.AllModifiers, FilterElements.Class));
+includeFilter.Rules.Add(new FilterRule(FilterModifiers.AllModifiers, FilterElements.Field));
+
+IFilter filter = new InvertFilter(includeFilter);
+		              </code>
+		              This filter will exclude all classes and all fields.
+				   	</para>
+				  </entry>
+				</row>
+				<row>
+                  <entry><para><codeEntityReference qualifyHint="true">T:NReflect.Filter.StatisticFilter</codeEntityReference></para></entry>
+				  <entry>
+				    <para>
+				      This filter doesn't filter anything. It just counts the occurrence of
+				      each entity and member. Like the <codeEntityReference qualifyHint="false">T:NReflect.Filter.InvertFilter</codeEntityReference>,
+				      this filter needs another filter to work:
+		              <code language="C#">
+ReflectAllFilter allFilter = new ReflectAllFilter();
+
+StatisticFilter statisticFilter = new StatisticFilter(allFilter);
+		              </code>
+				    </para>
+				  </entry>
+				</row>
+              </table>
+            </para>
+          </content>
+        </section>
+      </content>
+    </section>
+    <relatedTopics>
+      <link xlink:href="8f080f07-d44c-44ac-b883-a0993850d183"/>
+      <link xlink:href="5ebdd67b-0f04-4e7d-a71f-a225a10f7ca4"/>
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>

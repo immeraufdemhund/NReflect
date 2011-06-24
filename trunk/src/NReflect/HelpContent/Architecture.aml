@@ -1,0 +1,69 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<topic id="8f080f07-d44c-44ac-b883-a0993850d183" revisionNumber="1">
+  <developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <introduction>
+      <para>
+        This page gives an introduction of the architecture of the created result
+        of NReflect.
+      </para>
+    </introduction>
+    <section address="SecTypes">
+      <title>Types</title>
+      <content>
+        <para>
+          The result of a reflection process with NReflect is an object tree.
+          Every reflected type is represented by an object of one of types
+          displayed in Figure 1.
+        </para>
+        <mediaLink address="FigTypes">
+          <caption placement="after" lead="Figure 1">Class diagram showing the types used for reflected types.</caption>
+          <image xlink:href="Types"/>
+        </mediaLink>
+        <para>
+          As you can see, every type derives from
+          <codeEntityReference qualifyHint="true">T:NReflect.NREntities.NRTypeBase</codeEntityReference>.
+          Since enums and delegates can't contain any members, they directly
+          derive this class. Every other type derives from the derived abstract class
+          <codeEntityReference qualifyHint="true">T:NReflect.NREntities.NRCompositeType</codeEntityReference>.
+          The only type which uses this class to derive from is the interface.
+          All other types derive from
+          <codeEntityReference qualifyHint="true">T:NReflect.NREntities.NRSingleInheritanceType</codeEntityReference>.
+          These types can only have one other type to derive from which ars structs
+          and classes.
+        </para>
+        <para>
+          For more details about the used types, please refer to the reference
+          documentation of the namespace
+          <codeEntityReference qualifyHint="true">N:NReflect.NREntities</codeEntityReference>
+          in which you will find all mentioned types.
+        </para>
+      </content>
+    </section>
+    <section address="SecMembers">
+      <title>Members</title>
+      <content>
+        <para>
+          Every reflected member is also represented by an object. The possible
+          types are shown in Figure 2.
+        </para>
+        <mediaLink address="FigMembers">
+          <caption placement="after" lead="Figure 2">Class diagram showing the types used for reflected members.</caption>
+          <image xlink:href="Members"/>
+        </mediaLink>
+        <para>
+          There is one type of members which does not have a parent type:
+          <codeEntityReference qualifyHint="true">T:NReflect.NRMembers.NREnumValue</codeEntityReference>.
+          Every other member derives from
+          <codeEntityReference qualifyHint="true">T:NReflect.NRMembers.NRMember</codeEntityReference>.
+          A field, which is the simplest member of for example a class, directly
+          derives this class. All callable members derives the class
+          <codeEntityReference qualifyHint="true">T:NReflect.NRMembers.NROperation</codeEntityReference>
+        </para>
+      </content>
+    </section>
+    <relatedTopics>
+      <link xlink:href="51ae2c74-edd3-44cd-b666-b12639296cfb"/>
+      <link xlink:href="5ebdd67b-0f04-4e7d-a71f-a225a10f7ca4"/>
+    </relatedTopics>
+  </developerConceptualDocument>
+</topic>

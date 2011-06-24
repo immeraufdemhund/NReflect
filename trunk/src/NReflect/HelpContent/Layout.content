@@ -1,0 +1,8 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Topics>
+  <Topic id="5bfee795-e5c3-4bc8-8af4-3c8399e95ce5" visible="True" isDefault="true" title="NReflect" />
+  <Topic id="8f080f07-d44c-44ac-b883-a0993850d183" visible="True" title="Architecture" />
+  <Topic id="51ae2c74-edd3-44cd-b666-b12639296cfb" visible="True" title="Filter" />
+  <Topic id="5ebdd67b-0f04-4e7d-a71f-a225a10f7ca4" visible="True" title="Visitor" />
+  <Topic id="00a76374-994c-419f-b0a6-135a3cfa3041" visible="True" title="Reflect an assembly" />
+</Topics>
