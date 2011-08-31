@@ -960,7 +960,17 @@ namespace NReflect
           typeName.Append('?');
         }
       }
-
+      //openvenom - This part is especially added to handle ref Nullable<T> (ex: ref int32?)
+      //kind method parameter types
+      //To Malte Ried: Thank you very much for providing such a nice utility...
+      else if (!type.IsGenericType && type.IsByRef && type.GetGenericArguments().Length > 0
+               && type.FullName != null && type.FullName.StartsWith("System.Nullable`1") 
+               && type.FullName.EndsWith("&"))
+      {
+          typeName = new StringBuilder();
+          typeName.Append(type.GetGenericArguments()[0].Name); //This gives us the Int32 part
+          typeName.Append("?");
+      }
       return typeName.ToString();
     }
 

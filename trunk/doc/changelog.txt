@@ -1,3 +1,8 @@
+Version 0.9.2 (not yet released)
+--------------------------
+! Nullable ref parameters were not reflected correctly - thanks to openvenom 
+
+
 Version 0.9.1 (24-Jun-2011)
 --------------------------
 + Added more documentation
