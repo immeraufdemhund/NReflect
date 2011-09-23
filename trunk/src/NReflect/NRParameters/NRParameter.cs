@@ -17,7 +17,6 @@
 // along with NReflect. If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using System.Text;
 using NReflect.Modifier;
 
 namespace NReflect.NRParameters
@@ -41,7 +40,7 @@ namespace NReflect.NRParameters
     /// <summary>
     /// Gets or sets the type of the parameter.
     /// </summary>
-    public string Type { get; set; }
+    public NRType Type { get; set; }
 
     /// <summary>
     /// Gets or sets the full name of the type.

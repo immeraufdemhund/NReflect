@@ -51,7 +51,7 @@ namespace NReflect.NREntities
     /// <summary>
     /// Gets or sets the return type of this delegate.
     /// </summary>
-    public string ReturnType { get; set; }
+    public NRType ReturnType { get; set; }
 
     /// <summary>
     /// Gets a list of parameters of this delegate.

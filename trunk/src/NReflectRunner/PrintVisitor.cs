@@ -76,8 +76,8 @@ namespace NReflectRunner
 
     public void Visit(NRClass nrClass)
     {
-      outputLine(ToString(nrClass.AccessModifier) + ToString(nrClass.ClassModifier) + "class " + nrClass.Name);
-      outputLine("{");
+      OutputLine(ToString(nrClass.AccessModifier) + ToString(nrClass.ClassModifier) + "class " + nrClass.Name);
+      OutputLine("{");
       indent++;
       foreach (NRField nrField in nrClass.Fields)
       {
@@ -108,13 +108,13 @@ namespace NReflectRunner
         nrTypeBase.Accept(this);
       }
       indent--;
-      outputLine("}");
+      OutputLine("}");
     }
 
     public void Visit(NRInterface nrInterface)
     {
-      outputLine(ToString(nrInterface.AccessModifier) + "interface " + nrInterface.Name);
-      outputLine("{");
+      OutputLine(ToString(nrInterface.AccessModifier) + "interface " + nrInterface.Name);
+      OutputLine("{");
       indent++;
       foreach (NRProperty nrProperty in nrInterface.Properties)
       {
@@ -129,20 +129,20 @@ namespace NReflectRunner
         nrMethod.Accept(this);
       }
       indent--;
-      outputLine("}");
+      OutputLine("}");
     }
 
     public void Visit(NRDelegate nrDelegate)
     {
-      output(ToString(nrDelegate.AccessModifier) + "delegate " + nrDelegate.ReturnType + " " + nrDelegate.Name + "(");
+      Output(ToString(nrDelegate.AccessModifier) + "delegate " + ToString(nrDelegate.ReturnType) + " " + nrDelegate.Name + "(");
       PrintParameters(nrDelegate.Parameters);
-      outputLine(")", 0);
+      OutputLine(")", 0);
     }
 
     public void Visit(NRStruct nrStruct)
     {
-      outputLine(ToString(nrStruct.AccessModifier) + "struct " + nrStruct.Name);
-      outputLine("{");
+      OutputLine(ToString(nrStruct.AccessModifier) + "struct " + nrStruct.Name);
+      OutputLine("{");
       indent++;
       foreach (NRField nrField in nrStruct.Fields)
       {
@@ -173,20 +173,20 @@ namespace NReflectRunner
         nrTypeBase.Accept(this);
       }
       indent--;
-      outputLine("}");
+      OutputLine("}");
     }
 
     public void Visit(NREnum nrEnum)
     {
-      outputLine(ToString(nrEnum.AccessModifier) + "enum " + nrEnum.Name);
-      outputLine("{");
+      OutputLine(ToString(nrEnum.AccessModifier) + "enum " + nrEnum.Name);
+      OutputLine("{");
       indent++;
       foreach (NREnumValue nrEnumValue in nrEnum.Values)
       {
         nrEnumValue.Accept(this);
       }
       indent--;
-      outputLine("}");
+      OutputLine("}");
     }
 
     public void Visit(NRField nrField)
@@ -196,7 +196,7 @@ namespace NReflectRunner
       {
         value = ": " + nrField.InitialValue;
       }
-      outputLine(ToString(nrField.AccessModifier) + ToString(nrField.FieldModifier) + nrField.Type + " " + nrField.Name + value);
+      OutputLine(ToString(nrField.AccessModifier) + ToString(nrField.FieldModifier) + ToString(nrField.Type) + " " + nrField.Name + value);
     }
 
     public void Visit(NRProperty nrProperty)
@@ -210,56 +210,56 @@ namespace NReflectRunner
       {
         methods += ToString(nrProperty.SetterModifier) + "set ";
       }
-      output(ToString(nrProperty.AccessModifier) + ToString(nrProperty.OperationModifier) + nrProperty.Type + " " +
+      Output(ToString(nrProperty.AccessModifier) + ToString(nrProperty.OperationModifier) + ToString(nrProperty.Type) + " " +
              nrProperty.Name);
       if(nrProperty.Parameters.Count > 0)
       {
-        output("[", 0);
+        Output("[", 0);
         PrintParameters(nrProperty.Parameters);
-        output("]", 0);
+        Output("]", 0);
       }
-      outputLine(" { " + methods + "}", 0);
+      OutputLine(" { " + methods + "}", 0);
     }
 
     public void Visit(NRMethod nrMethod)
     {
-      output(ToString(nrMethod.AccessModifier) + ToString(nrMethod.OperationModifier) + nrMethod.Type + " " + nrMethod.Name + "(");
+      Output(ToString(nrMethod.AccessModifier) + ToString(nrMethod.OperationModifier) + ToString(nrMethod.Type) + " " + nrMethod.Name + "(");
       PrintParameters(nrMethod.Parameters);
-      outputLine(")", 0);
+      OutputLine(")", 0);
     }
 
     public void Visit(NROperator nrMethod)
     {
-      string returnType = "";
-      if (!String.IsNullOrWhiteSpace(nrMethod.Type))
+      string returnType = ToString(nrMethod.Type);
+      if (!String.IsNullOrWhiteSpace(returnType))
       {
-        returnType = nrMethod.Type + " ";
+        returnType = returnType + " ";
       }
-      output(ToString(nrMethod.AccessModifier) + ToString(nrMethod.OperationModifier) + returnType + nrMethod.Name + "(");
+      Output(ToString(nrMethod.AccessModifier) + ToString(nrMethod.OperationModifier) + returnType + nrMethod.Name + "(");
       PrintParameters(nrMethod.Parameters);
-      outputLine(")", 0);
+      OutputLine(")", 0);
     }
 
     public void Visit(NRConstructor nrConstructor)
     {
-      output(ToString(nrConstructor.AccessModifier) + ToString(nrConstructor.OperationModifier) + nrConstructor.Name + "(");
+      Output(ToString(nrConstructor.AccessModifier) + ToString(nrConstructor.OperationModifier) + nrConstructor.Name + "(");
       PrintParameters(nrConstructor.Parameters);
-      outputLine(")", 0);
+      OutputLine(")", 0);
     }
 
     public void Visit(NREvent nrEvent)
     {
-      output(ToString(nrEvent.AccessModifier) + "event " + nrEvent.Type + " " + nrEvent.Name + "(");
+      Output(ToString(nrEvent.AccessModifier) + "event " + ToString(nrEvent.Type) + " " + nrEvent.Name + "(");
       PrintParameters(nrEvent.Parameters);
-      outputLine(")", 0);
+      OutputLine(")", 0);
     }
 
     public void Visit(NRParameter nrParameter)
     {
-      output(ToString(nrParameter.ParameterModifier) + nrParameter.Type + " " + nrParameter.Name, 0);
+      Output(ToString(nrParameter.ParameterModifier) + ToString(nrParameter.Type) + " " + nrParameter.Name, 0);
       if(nrParameter.ParameterModifier == ParameterModifier.Optional)
       {
-        output(" = " + nrParameter.DefaultValue, 0);
+        Output(" = " + nrParameter.DefaultValue, 0);
       }
     }
 
@@ -270,7 +270,7 @@ namespace NReflectRunner
       {
         value = " = " + nrEnumValue.Value;
       }
-      outputLine(nrEnumValue.Name + value + ",");
+      OutputLine(nrEnumValue.Name + value + ",");
     }
 
     /// <summary>
@@ -280,7 +280,7 @@ namespace NReflectRunner
     /// <param name="types">A list of entities to print.</param>
     private void PrintEntities(string entityType, IEnumerable<NRTypeBase> types)
     {
-      outputLine(String.Format("Reflected {0}:", entityType));
+      OutputLine(String.Format("Reflected {0}:", entityType));
       foreach (IVisitable type in types)
       {
         type.Accept(this);
@@ -299,27 +299,27 @@ namespace NReflectRunner
         nrParameters[i].Accept(this);
         if(i < nrParameters.Count - 1)
         {
-          output(", ", 0);
+          Output(", ", 0);
         }
       }
     }
 
-    private void output(string text)
+    private void Output(string text)
     {
-      output(text, indent);
+      Output(text, indent);
     }
 
-    private void output(string text, int indention)
+    private void Output(string text, int indention)
     {
       writer.Write("{0," + indention * 2 + "}{1}", "", text);
     }
 
-    private void outputLine(string text)
+    private void OutputLine(string text)
     {
-      outputLine(text, indent);
+      OutputLine(text, indent);
     }
 
-    private void outputLine(string text, int indention)
+    private void OutputLine(string text, int indention)
     {
       writer.WriteLine("{0," + indention * 2 + "}{1}", "", text);
     }
@@ -392,6 +392,16 @@ namespace NReflectRunner
         return "";
       }
       return fieldModifier.ToString().ToLower() + " ";
+    }
+
+    /// <summary>
+    /// Returns a readable string containing the <see cref="NRType"/>.
+    /// </summary>
+    /// <param name="nrType">The <see cref="NRType"/> to convert to a string.</param>
+    /// <returns>The converted <see cref="NRType"/></returns>
+    private string ToString(NRType nrType)
+    {
+      return nrType.IsDynamic ? "dynamic" : nrType.Type;
     }
 
     #endregion

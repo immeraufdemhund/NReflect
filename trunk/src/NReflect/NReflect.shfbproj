@@ -18,7 +18,7 @@
     <OutputPath>.\Help\</OutputPath>
     <HtmlHelpName>NReflect</HtmlHelpName>
     <Language>en-US</Language>
-    <HelpFileFormat>HtmlHelp1</HelpFileFormat>
+    <HelpFileFormat>Website</HelpFileFormat>
     <DocumentationSources>
       <DocumentationSource sourceFile="NReflect.csproj" xmlns="" />
     </DocumentationSources>

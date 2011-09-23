@@ -198,7 +198,7 @@ namespace NReflect.NRCode
     public static string Declaration(this NRParameter parameter)
     {
       string modifier = AddSpace(parameter.ParameterModifier.Declaration());
-      string type = parameter.Type;
+      string type = parameter.Type.IsDynamic ? "dynamic" : parameter.Type.Type;
       if (type.EndsWith("&"))
       {
         type = type.Substring(0, type.Length - 1);

@@ -17,15 +17,14 @@
 // along with NReflect. If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using NReflect.Modifier;
 
-namespace NReflect.NRMembers
+namespace NReflect
 {
   /// <summary>
-  /// Represents a member of a type which is reflected by NReflect.
+  /// Contains a reflected type.
   /// </summary>
   [Serializable]
-  public abstract class NRMember : IVisitable
+  public class NRType
   {
     // ========================================================================
     // Properties
@@ -33,37 +32,14 @@ namespace NReflect.NRMembers
     #region === Properties
 
     /// <summary>
-    /// Gets or sets the access modifier for this type.
+    /// Gets or sets the name of the type.
     /// </summary>
-    public AccessModifier AccessModifier { get; set; }
+    public string Type { get; set; }
 
     /// <summary>
-    /// Gets or sets the name of the member.
+    /// Gets or sets a value indicating whether the type is dynamic.
     /// </summary>
-    public string Name { get; set; }
-
-    /// <summary>
-    /// Gets or sets the type of the member.
-    /// </summary>
-    public NRType Type { get; set; }
-
-    /// <summary>
-    /// Gets or sets the full name of the type.
-    /// </summary>
-    public string TypeFullName { get; set; }
-
-    #endregion
-
-    // ========================================================================
-    // Methods
-
-    #region === Methods
-
-    /// <summary>
-    /// Accept an <see cref="IVisitor"/> instance on the implementing class and all its children.
-    /// </summary>
-    /// <param name="visitor">The <see cref="IVisitor"/> instance to accept.</param>
-    public abstract void Accept(IVisitor visitor);
+    public bool IsDynamic { get; set; }
 
     #endregion
   }
