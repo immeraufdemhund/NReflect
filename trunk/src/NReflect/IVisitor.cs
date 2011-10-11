@@ -106,6 +106,12 @@ namespace NReflect
     void Visit(NRParameter nrParameter);
 
     /// <summary>
+    /// Visit a <see cref="NRTypeParameter"/>.
+    /// </summary>
+    /// <param name="nrTypeParameter">The <see cref="NRTypeParameter"/> to visit.</param>
+    void Visit(NRTypeParameter nrTypeParameter);
+
+    /// <summary>
     /// Visit a <see cref="NREnumValue"/>.
     /// </summary>
     /// <param name="nrEnumValue">The <see cref="NREnumValue"/> to visit.</param>

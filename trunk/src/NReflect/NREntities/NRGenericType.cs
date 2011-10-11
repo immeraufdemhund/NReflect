@@ -1,4 +1,4 @@
-// NReflect - Easy assembly reflection
+﻿// NReflect - Easy assembly reflection
 // Copyright (C) 2010-2011 Malte Ried
 //
 // This file is part of NReflect.
@@ -18,15 +18,15 @@
 
 using System;
 using System.Collections.Generic;
-using NReflect.NRMembers;
+using NReflect.NRParameters;
 
 namespace NReflect.NREntities
 {
   /// <summary>
-  /// Represents a type which can contain fields and methods which is reflected by NReflect.
+  /// Represents a type which can be customized via generics.
   /// </summary>
   [Serializable]
-  public abstract class NRCompositeType : NRGenericType
+  public abstract class NRGenericType : NRTypeBase
   {
     // ========================================================================
     // Con- / Destruction
@@ -34,13 +34,11 @@ namespace NReflect.NREntities
     #region === Con- / Destruction
 
     /// <summary>
-    /// Initializes a new instance of <see cref="NRCompositeType"/>.
+    /// Initializes a new instance of <see cref="NRGenericType"/>.
     /// </summary>
-    protected NRCompositeType()
+    protected NRGenericType()
     {
-      Properties = new List<NRProperty>();
-      Events = new List<NREvent>();
-      Methods = new List<NRMethod>();
+      GenericTypes = new List<NRTypeParameter>();
     }
 
     #endregion
@@ -51,19 +49,17 @@ namespace NReflect.NREntities
     #region === Properties
 
     /// <summary>
-    /// Gets a list of properties of this type.
+    /// Gets a list containing all type parameters of a type.
     /// </summary>
-    public List<NRProperty> Properties { get; private set; }
+    public List<NRTypeParameter> GenericTypes { get; private set; }
 
     /// <summary>
-    /// Gets a list of events of this type.
+    /// Gets a value indicating wether this type is a generic.
     /// </summary>
-    public List<NREvent> Events { get; private set; }
-
-    /// <summary>
-    /// Gets a list of methods of this type.
-    /// </summary>
-    public List<NRMethod> Methods { get; private set; }
+    public bool IsGeneric
+    {
+      get { return GenericTypes.Count > 0; }
+    }
 
     #endregion
   }

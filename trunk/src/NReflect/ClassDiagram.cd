@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
   <Class Name="NReflect.NREntities.NRClass">
-    <Position X="3.25" Y="8" Width="1.5" />
+    <Position X="2.75" Y="10.25" Width="1.5" />
     <Members>
       <Method Name="Accept" Hidden="true" />
     </Members>
@@ -11,7 +11,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="NReflect.NREntities.NRCompositeType">
-    <Position X="2.75" Y="3" Width="1.5" />
+    <Position X="2.25" Y="5.25" Width="1.5" />
     <Members>
       <Method Name="NRCompositeType" Hidden="true" />
     </Members>
@@ -21,7 +21,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="NReflect.NREntities.NRDelegate">
-    <Position X="7.25" Y="3" Width="1.5" />
+    <Position X="6" Y="5.25" Width="1.5" />
     <Members>
       <Method Name="Accept" Hidden="true" />
       <Method Name="NRDelegate" Hidden="true" />
@@ -32,7 +32,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="NReflect.NREntities.NREnum">
-    <Position X="9.5" Y="3" Width="1.5" />
+    <Position X="7.25" Y="3" Width="1.5" />
     <Members>
       <Method Name="Accept" Hidden="true" />
       <Method Name="NREnum" Hidden="true" />
@@ -43,7 +43,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="NReflect.NREntities.NRInterface">
-    <Position X="1" Y="5.25" Width="1.5" />
+    <Position X="0.5" Y="7.5" Width="1.5" />
     <Members>
       <Method Name="Accept" Hidden="true" />
     </Members>
@@ -53,7 +53,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="NReflect.NREntities.NRStruct">
-    <Position X="5.25" Y="8" Width="1.5" />
+    <Position X="4.75" Y="10.25" Width="1.5" />
     <Members>
       <Method Name="Accept" Hidden="true" />
     </Members>
@@ -63,7 +63,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="NReflect.NREntities.NRTypeBase">
-    <Position X="5" Y="0.5" Width="1.5" />
+    <Position X="4.5" Y="0.5" Width="1.5" />
     <Members>
       <Method Name="Accept" Hidden="true" />
     </Members>
@@ -123,9 +123,10 @@
     <Position X="14.5" Y="10.5" Width="1.5" />
     <Members>
       <Method Name="Accept" Hidden="true" />
+      <Method Name="NRMethod" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>AIAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AIAAAAAAAAAAAAAAAAAAAAAAQQAAAAAAAAAAAAgAAAA=</HashCode>
       <FileName>NRMembers\NRMethod.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -161,7 +162,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="NReflect.NREntities.NRSingleInheritanceType">
-    <Position X="4" Y="5.25" Width="2" />
+    <Position X="3.5" Y="7.5" Width="2" />
     <Members>
       <Method Name="NRSingleInheritanceType" Hidden="true" />
     </Members>
@@ -201,6 +202,28 @@
       <FileName>NRMembers\NROperator.cs</FileName>
     </TypeIdentifier>
   </Class>
+  <Class Name="NReflect.NREntities.NRGenericType">
+    <Position X="4.5" Y="3" Width="1.5" />
+    <Members>
+      <Method Name="NRGenericType" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAgAAAA=</HashCode>
+      <FileName>NREntities\NRGenericType.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="NReflect.NRParameters.NRTypeParameter">
+    <Position X="8.5" Y="9" Width="1.5" />
+    <Members>
+      <Method Name="Accept" Hidden="true" />
+      <Method Name="NRTypeParameter" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAAAQAAAAAAQAAQAAAAAoAAgAAEAAAAA=</HashCode>
+      <FileName>NRParameters\NRTypeParameter.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
   <Interface Name="NReflect.IVisitor" Collapsed="true">
     <Position X="12" Y="1.5" Width="1.5" />
     <TypeIdentifier>
@@ -215,7 +238,7 @@
       <FileName>IVisitable.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Enum Name="NReflect.Modifier.AccessModifier">
+  <Enum Name="NReflect.Modifier.AccessModifier" Collapsed="true">
     <Position X="12" Y="2.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAIEAIAAAEAAAAAAAAAAACAAAQAA=</HashCode>
@@ -236,7 +259,7 @@
       <FileName>Modifier\FieldModifier.cs</FileName>
     </TypeIdentifier>
   </Enum>
-  <Enum Name="NReflect.Modifier.OperationModifier">
+  <Enum Name="NReflect.Modifier.OperationModifier" Collapsed="true">
     <Position X="12" Y="3.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAQABAQAAAABAAAAAAAAAAAAAAAAEAAAAAAEACAA=</HashCode>

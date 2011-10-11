@@ -26,7 +26,7 @@ namespace NReflect.NREntities
   /// Represents a delegate which is reflected by NReflect.
   /// </summary>
   [Serializable]
-  public class NRDelegate : NRTypeBase
+  public class NRDelegate : NRGenericType
   {
     // ========================================================================
     // Con- / Destruction

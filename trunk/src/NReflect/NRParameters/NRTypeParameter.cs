@@ -1,4 +1,4 @@
-// NReflect - Easy assembly reflection
+﻿// NReflect - Easy assembly reflection
 // Copyright (C) 2010-2011 Malte Ried
 //
 // This file is part of NReflect.
@@ -18,15 +18,14 @@
 
 using System;
 using System.Collections.Generic;
-using NReflect.NRParameters;
 
-namespace NReflect.NRMembers
+namespace NReflect.NRParameters
 {
   /// <summary>
-  /// Represents a method of a type which is reflected by NReflect.
+  /// Represents a type parameter which is reflected by NReflect.
   /// </summary>
   [Serializable]
-  public class NRMethod : NROperation
+  public class NRTypeParameter : IVisitable
   {
     // ========================================================================
     // Con- / Destruction
@@ -34,11 +33,11 @@ namespace NReflect.NRMembers
     #region === Con- / Destruction
 
     /// <summary>
-    /// Initializes a new instance of <see cref="NRMethod"/>.
+    /// Initializes a new instance of <see cref="NRTypeParameter"/>.
     /// </summary>
-    public NRMethod()
+    public NRTypeParameter()
     {
-      GenericTypes = new List<NRTypeParameter>();
+      BaseTypes = new List<string>();
     }
 
     #endregion
@@ -49,22 +48,39 @@ namespace NReflect.NRMembers
     #region === Properties
 
     /// <summary>
-    /// Gets or sets a value indicating if the method is a 
+    /// Gets or sets the name of the type parameter.
     /// </summary>
-    public bool IsExtensionMethod { get; set; }
+    public string Name { get; set; }
 
     /// <summary>
-    /// Gets a list containing all type parameters of a type.
+    /// Gets a list of types representing the constraints of the type parameter.
     /// </summary>
-    public List<NRTypeParameter> GenericTypes { get; private set; }
+    public List<string> BaseTypes { get; private set; }
 
     /// <summary>
-    /// Gets a value indicating wether this type is a generic.
+    /// Gets or sets a value that indicates wether the generic parameter has a class constraint.
     /// </summary>
-    public bool IsGeneric
-    {
-      get { return GenericTypes.Count > 0; }
-    }
+    public bool IsClass { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value that indicates wether the generic parameter has a struct constraint.
+    /// </summary>
+    public bool IsStruct { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value that indicates wether the generic parameter has a default constructor constraint.
+    /// </summary>
+    public bool IsConstructor { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value that indicates wether the generic parameter has a contravariant constraint.
+    /// </summary>
+    public bool IsIn { get; set; }
+
+    /// <summary>
+    /// Gets or sets a value that indicates wether the generic parameter has a covariant constraint.
+    /// </summary>
+    public bool IsOut { get; set; }
 
     #endregion
 
@@ -77,7 +93,7 @@ namespace NReflect.NRMembers
     /// Accept an <see cref="IVisitor"/> instance on the implementing class and all its children.
     /// </summary>
     /// <param name="visitor">The <see cref="IVisitor"/> instance to accept.</param>
-    public override void Accept(IVisitor visitor)
+    public void Accept(IVisitor visitor)
     {
       visitor.Visit(this);
     }

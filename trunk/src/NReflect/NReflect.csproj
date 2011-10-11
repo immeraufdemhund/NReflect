@@ -66,6 +66,7 @@
     <Compile Include="NREntities\NRCompositeType.cs" />
     <Compile Include="NREntities\NRDelegate.cs" />
     <Compile Include="NREntities\NREnum.cs" />
+    <Compile Include="NREntities\NRGenericType.cs" />
     <Compile Include="NREntities\NRInterface.cs" />
     <Compile Include="NREntities\NRSingleInheritanceType.cs" />
     <Compile Include="NREntities\NRStruct.cs" />
@@ -81,6 +82,7 @@
     <Compile Include="NRMembers\NROperator.cs" />
     <Compile Include="NRMembers\NRProperty.cs" />
     <Compile Include="NRParameters\NRParameter.cs" />
+    <Compile Include="NRParameters\NRTypeParameter.cs" />
     <Compile Include="NRRelationships.cs" />
     <Compile Include="NRRelationship\NRAssociation.cs" />
     <Compile Include="NRRelationship\NRRealization.cs" />

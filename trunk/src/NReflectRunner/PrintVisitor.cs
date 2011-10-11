@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Text;
 using NReflect;
 using NReflect.Modifier;
 using NReflect.NREntities;
@@ -76,7 +77,12 @@ namespace NReflectRunner
 
     public void Visit(NRClass nrClass)
     {
-      OutputLine(ToString(nrClass.AccessModifier) + ToString(nrClass.ClassModifier) + "class " + nrClass.Name);
+      Output(ToString(nrClass.AccessModifier) + ToString(nrClass.ClassModifier) + "class " + nrClass.Name + GetGenericDefinition(nrClass));
+      foreach (NRTypeParameter nrTypeParameter in nrClass.GenericTypes)
+      {
+        nrTypeParameter.Accept(this);
+      }
+      OutputLine("");
       OutputLine("{");
       indent++;
       foreach (NRField nrField in nrClass.Fields)
@@ -113,7 +119,12 @@ namespace NReflectRunner
 
     public void Visit(NRInterface nrInterface)
     {
-      OutputLine(ToString(nrInterface.AccessModifier) + "interface " + nrInterface.Name);
+      Output(ToString(nrInterface.AccessModifier) + "interface " + nrInterface.Name + GetGenericDefinition(nrInterface));
+      foreach (NRTypeParameter nrTypeParameter in nrInterface.GenericTypes)
+      {
+        nrTypeParameter.Accept(this);
+      }
+      OutputLine("");
       OutputLine("{");
       indent++;
       foreach (NRProperty nrProperty in nrInterface.Properties)
@@ -134,14 +145,24 @@ namespace NReflectRunner
 
     public void Visit(NRDelegate nrDelegate)
     {
-      Output(ToString(nrDelegate.AccessModifier) + "delegate " + ToString(nrDelegate.ReturnType) + " " + nrDelegate.Name + "(");
+      Output(ToString(nrDelegate.AccessModifier) + "delegate " + ToString(nrDelegate.ReturnType) + " " + nrDelegate.Name + GetGenericDefinition(nrDelegate) + "(");
       PrintParameters(nrDelegate.Parameters);
-      OutputLine(")", 0);
+      Output(")", 0);
+      foreach (NRTypeParameter nrTypeParameter in nrDelegate.GenericTypes)
+      {
+        nrTypeParameter.Accept(this);
+      }
+      OutputLine("");
     }
 
     public void Visit(NRStruct nrStruct)
     {
-      OutputLine(ToString(nrStruct.AccessModifier) + "struct " + nrStruct.Name);
+      Output(ToString(nrStruct.AccessModifier) + "struct " + nrStruct.Name + GetGenericDefinition(nrStruct));
+      foreach (NRTypeParameter nrTypeParameter in nrStruct.GenericTypes)
+      {
+        nrTypeParameter.Accept(this);
+      }
+      OutputLine("");
       OutputLine("{");
       indent++;
       foreach (NRField nrField in nrStruct.Fields)
@@ -223,20 +244,25 @@ namespace NReflectRunner
 
     public void Visit(NRMethod nrMethod)
     {
-      Output(ToString(nrMethod.AccessModifier) + ToString(nrMethod.OperationModifier) + ToString(nrMethod.Type) + " " + nrMethod.Name + "(");
-      PrintParameters(nrMethod.Parameters);
-      OutputLine(")", 0);
+      Output(ToString(nrMethod.AccessModifier) + ToString(nrMethod.OperationModifier) + ToString(nrMethod.Type) + " " + nrMethod.Name + GetGenericDefinition(nrMethod) + "(");
+      PrintParameters(nrMethod.Parameters, nrMethod.IsExtensionMethod);
+      Output(")", 0);
+      foreach (NRTypeParameter nrTypeParameter in nrMethod.GenericTypes)
+      {
+        nrTypeParameter.Accept(this);
+      }
+      OutputLine("", 0);
     }
 
-    public void Visit(NROperator nrMethod)
+    public void Visit(NROperator nrOperator)
     {
-      string returnType = ToString(nrMethod.Type);
+      string returnType = ToString(nrOperator.Type);
       if (!String.IsNullOrWhiteSpace(returnType))
       {
         returnType = returnType + " ";
       }
-      Output(ToString(nrMethod.AccessModifier) + ToString(nrMethod.OperationModifier) + returnType + nrMethod.Name + "(");
-      PrintParameters(nrMethod.Parameters);
+      Output(ToString(nrOperator.AccessModifier) + ToString(nrOperator.OperationModifier) + returnType + nrOperator.Name + "(");
+      PrintParameters(nrOperator.Parameters);
       OutputLine(")", 0);
     }
 
@@ -261,6 +287,34 @@ namespace NReflectRunner
       {
         Output(" = " + nrParameter.DefaultValue, 0);
       }
+    }
+
+    public void Visit(NRTypeParameter nrTypeParameter)
+    {
+      if (!nrTypeParameter.IsStruct && !nrTypeParameter.IsClass && nrTypeParameter.BaseTypes.Count <= 0 && !nrTypeParameter.IsConstructor && !nrTypeParameter.IsIn && !nrTypeParameter.IsOut)
+      {
+        return;
+      }
+
+      StringBuilder result = new StringBuilder(" where " + nrTypeParameter.Name + " :");
+      if (nrTypeParameter.IsStruct)
+      {
+        result.Append(" struct, ");
+      }
+      else if(nrTypeParameter.IsClass)
+      {
+        result.Append(" class, ");
+      }
+      foreach(string baseType in nrTypeParameter.BaseTypes)
+      {
+        result.Append(" " + baseType + ", ");
+      }
+      if(nrTypeParameter.IsConstructor)
+      {
+        result.Append(" new(), ");
+      }
+      result.Length -= 2;
+      Output(result.ToString(), 0);
     }
 
     public void Visit(NREnumValue nrEnumValue)
@@ -292,10 +346,15 @@ namespace NReflectRunner
     /// Prints the parameters.
     /// </summary>
     /// <param name="nrParameters">A list of the parameters to print.</param>
-    private void PrintParameters(List<NRParameter> nrParameters)
+    /// <param name="fromExtensionMethod">Set to true if the parameters of an extension method should be printed.</param>
+    private void PrintParameters(List<NRParameter> nrParameters, bool fromExtensionMethod = false)
     {
       for(int i = 0; i < nrParameters.Count; i++)
       {
+        if(i == 0 && fromExtensionMethod)
+        {
+          Output("this ", 0);
+        }
         nrParameters[i].Accept(this);
         if(i < nrParameters.Count - 1)
         {
@@ -402,6 +461,62 @@ namespace NReflectRunner
     private string ToString(NRType nrType)
     {
       return nrType.IsDynamic ? "dynamic" : nrType.Type;
+    }
+
+    /// <summary>
+    /// Returns a string containing the type parameter definitions.
+    /// </summary>
+    /// <param name="nrGenericType">The type to take the definitions from.</param>
+    /// <returns>A string containing the type parameter definitions.</returns>
+    private string GetGenericDefinition(NRGenericType nrGenericType)
+    {
+      if(!nrGenericType.IsGeneric)
+      {
+        return "";
+      }
+
+      return GetGenericDefinition(nrGenericType.GenericTypes);
+    }
+
+    /// <summary>
+    /// Returns a string containing the type parameter definitions.
+    /// </summary>
+    /// <param name="nrMethod">The method to take the definitions from.</param>
+    /// <returns>A string containing the type parameter definitions.</returns>
+    private string GetGenericDefinition(NRMethod nrMethod)
+    {
+      if(!nrMethod.IsGeneric)
+      {
+        return "";
+      }
+
+      return GetGenericDefinition(nrMethod.GenericTypes);
+    }
+
+    /// <summary>
+    /// Returns a string containing the type parameter definitions.
+    /// </summary>
+    /// <param name="nrTypeParameters">A list of <see cref="NRTypeParameter"/>s to return.</param>
+    /// <returns>A string containing the type parameter definitions.</returns>
+    private static string GetGenericDefinition(IEnumerable<NRTypeParameter> nrTypeParameters)
+    {
+      StringBuilder result = new StringBuilder("<");
+      foreach (NRTypeParameter nrTypeParameter in nrTypeParameters)
+      {
+        if(nrTypeParameter.IsIn)
+        {
+          result.Append("in ");
+        }
+        if(nrTypeParameter.IsOut)
+        {
+          result.Append("out ");
+        }
+        result.AppendFormat("{0}, ", nrTypeParameter.Name);
+      }
+      result.Length -= 2;
+      result.Append(">");
+
+      return result.ToString();
     }
 
     #endregion

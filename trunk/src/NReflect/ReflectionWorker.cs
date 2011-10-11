@@ -280,6 +280,7 @@ namespace NReflect
       ReflectMethods(type, nrClass);
 
       ReflectSingleInheritanceType(type, nrClass);
+      ReflectGenericType(type, nrClass);
       ReflectTypeBase(type, nrClass);
 
       if(type.IsAbstract && type.IsSealed)
@@ -316,6 +317,7 @@ namespace NReflect
                                 };
       ReflectParameters(methodInfo, nrDelegate.Parameters);
 
+      ReflectGenericType(type, nrDelegate);
       ReflectTypeBase(type, nrDelegate);
 
       //Ask the filter if the delegate should be in the result.
@@ -336,6 +338,7 @@ namespace NReflect
       ReflectProperties(type, nrInterface);
       ReflectMethods(type, nrInterface);
 
+      ReflectGenericType(type, nrInterface);
       ReflectTypeBase(type, nrInterface);
 
       //Ask the filter if the interface should be int the result.
@@ -359,6 +362,7 @@ namespace NReflect
       ReflectMethods(type, nrStruct);
 
       ReflectSingleInheritanceType(type, nrStruct);
+      ReflectGenericType(type, nrStruct);
       ReflectTypeBase(type, nrStruct);
 
       //Ask the filter if the struct should be in the result.
@@ -426,6 +430,22 @@ namespace NReflect
     }
 
     /// <summary>
+    /// Reflects a generic type.
+    /// </summary>
+    /// <param name="type">The <see cref="Type"/> to reflect.</param>
+    /// <param name="nrGenericType">An instance of <see cref="NRGenericType"/> which will
+    /// receive the reflected results.</param>
+    private void ReflectGenericType(Type type, NRGenericType nrGenericType)
+    {
+      if(!type.IsGenericType)
+      {
+        return;
+      }
+
+      nrGenericType.GenericTypes.AddRange(GetTypeParameters(type.GetGenericArguments()));
+    }
+
+    /// <summary>
     /// Reflect the basic type <paramref name="type"/>. All information is
     /// stored in <paramref name="nrTypeBase"/>.
     /// </summary>
@@ -433,7 +453,7 @@ namespace NReflect
     /// <param name="nrTypeBase">All information is stored in this TypeBase.</param>
     private void ReflectTypeBase(Type type, NRTypeBase nrTypeBase)
     {
-      nrTypeBase.Name = GetTypeName(type);
+      nrTypeBase.Name = GetRawTypeName(type);
       nrTypeBase.FullName = type.FullName;
       //Might set the wrong access modifier for nested classes. Will be
       //corrected when adding the nesting relationships.
@@ -681,10 +701,13 @@ namespace NReflect
         }
         else
         {
+          NRMethod nrMethod = (NRMethod)nrOperation;
+          nrMethod.IsExtensionMethod = HasMemberAttribute(methodInfo, typeof(ExtensionAttribute));
+          nrMethod.GenericTypes.AddRange(GetTypeParameters(methodInfo.GetGenericArguments()));
           //Ask the filter if the method should be in the result.
-          if(Filter.Reflect((NRMethod)nrOperation))
+          if(Filter.Reflect(nrMethod))
           {
-            nrCompositeType.Methods.Add((NRMethod)nrOperation);
+            nrCompositeType.Methods.Add(nrMethod);
           }
         }
       }
@@ -846,7 +869,7 @@ namespace NReflect
         return false;
       }
       IList<CustomAttributeData> attributeDatas = CustomAttributeData.GetCustomAttributes(memberInfo);
-      return attributeDatas.Any(attributeData => attributeData.Constructor.DeclaringType == type);
+      return attributeDatas.Any(attributeData => attributeData.Constructor.DeclaringType.FullName == type.FullName);
     }
 
     /// <summary>
@@ -1040,6 +1063,24 @@ namespace NReflect
     }
 
     /// <summary>
+    /// Gets the raw name of a type. That is, special generics stuff is removed.
+    /// </summary>
+    /// <param name="type">The type to get the raw name of.</param>
+    /// <returns>The raw name as a <see cref="string"/>.</returns>
+    private string GetRawTypeName(Type type)
+    {
+      if (type.IsGenericType)
+      {
+        if(type.Name.LastIndexOf('`') > 0)
+        {
+          //Generics get names like "List`1"
+          return type.Name.Substring(0, type.Name.LastIndexOf('`'));
+        }
+      }
+      return type.Name;
+    }
+
+    /// <summary>
     /// Gets a list of the names of all events declared by the given type.
     /// </summary>
     /// <param name="type">The event names are extrected from this type.</param>
@@ -1051,6 +1092,40 @@ namespace NReflect
                                                  where eventInfo.DeclaringType == type
                                                  select eventInfo.Name);
       return eventNames;
+    }
+
+    /// <summary>
+    /// Gets a list containing the the type parameters which are created from
+    /// the given types.
+    /// </summary>
+    /// <param name="genericArguments">The types of a generic type.</param>
+    /// <returns>A list containing the type parameters.</returns>
+    private static IEnumerable<NRTypeParameter> GetTypeParameters(Type[] genericArguments)
+    {
+      List<NRTypeParameter> nrTypeParameters = new List<NRTypeParameter>(genericArguments.Length);
+      foreach(Type genericArgument in genericArguments)
+      {
+        NRTypeParameter nrTypeParameter = new NRTypeParameter();
+        nrTypeParameter.Name = genericArgument.Name;
+        GenericParameterAttributes attributes = genericArgument.GenericParameterAttributes;
+        nrTypeParameter.IsStruct = (attributes & GenericParameterAttributes.NotNullableValueTypeConstraint) != 0;
+        nrTypeParameter.IsClass = (attributes & GenericParameterAttributes.ReferenceTypeConstraint) != 0;
+        nrTypeParameter.IsConstructor = (attributes & GenericParameterAttributes.DefaultConstructorConstraint) != 0 &&
+                                        !nrTypeParameter.IsStruct;
+        nrTypeParameter.IsIn = (attributes & GenericParameterAttributes.Contravariant) != 0;
+        nrTypeParameter.IsOut = (attributes & GenericParameterAttributes.Covariant) > 0;
+        Type[] genericParameterConstraints = genericArgument.GetGenericParameterConstraints();
+        foreach(Type genericParameterConstraint in genericParameterConstraints)
+        {
+          if(genericParameterConstraint != typeof(ValueType))
+          {
+            nrTypeParameter.BaseTypes.Add(GetTypeName(genericParameterConstraint));
+          }
+        }
+        nrTypeParameters.Add(nrTypeParameter);
+      }
+
+      return nrTypeParameters;
     }
 
     /// <summary>
