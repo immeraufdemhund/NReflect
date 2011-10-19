@@ -79,5 +79,9 @@ namespace NReflect.Filter
     /// Member event
     /// </summary>
     Event,
+    /// <summary>
+    /// Attribute
+    /// </summary>
+    Attribute
   }
 }

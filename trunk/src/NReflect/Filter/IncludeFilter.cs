@@ -20,6 +20,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NReflect.Modifier;
+using NReflect.NRAttributes;
 using NReflect.NREntities;
 using NReflect.NRMembers;
 
@@ -190,6 +191,17 @@ namespace NReflect.Filter
     public bool Reflect(NRProperty nrProperty)
     {
       return Reflect(FilterElements.Property, nrProperty);
+    }
+
+    /// <summary>
+    /// Determines if an attribute will be reflected.
+    /// </summary>
+    /// <param name="nrAttribute">The attribute to test.</param>
+    /// <returns><c>True</c> if the attribute should be reflected.</returns>
+    public bool Reflect(NRAttribute nrAttribute)
+    {
+      return Rules.Any(filterRule => filterRule.Element == FilterElements.Attribute) |
+        Rules.Any(filterRule => filterRule.Element == FilterElements.AllElements);
     }
 
     /// <summary>

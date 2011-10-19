@@ -49,10 +49,29 @@
       <Method Name="NRTypeParameter" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>AIAAAAAAAAAAAAAQAAAAAAQAAQAAAAAoAAgAAEAAAAA=</HashCode>
+      <HashCode>AIAAAAAAAAAAAAAQAAAAAAQQAQAAAAAoAAgAAEAAAAA=</HashCode>
       <FileName>NRParameters\NRTypeParameter.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="NReflect.NRAttributes.NRAttribute">
+    <Position X="4.75" Y="3" Width="1.5" />
+    <Members>
+      <Method Name="Accept" Hidden="true" />
+      <Method Name="NRAttribute" Hidden="true" />
+    </Members>
+    <TypeIdentifier>
+      <HashCode>AIAAAAAAAAAAAAAAAAAAAAQAAAgAAAAAAAAgAAAAAAA=</HashCode>
+      <FileName>NRAttributes\NRAttribute.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="NReflect.NRAttributes.NRAttributeValue">
+    <Position X="6.75" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAgAAAAAAA=</HashCode>
+      <FileName>NRAttributes\NRAttributeValue.cs</FileName>
+    </TypeIdentifier>
   </Class>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

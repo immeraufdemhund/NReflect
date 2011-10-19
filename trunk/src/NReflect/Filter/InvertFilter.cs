@@ -17,6 +17,7 @@
 // along with NReflect. If not, see <http://www.gnu.org/licenses/>.
 
 using System;
+using NReflect.NRAttributes;
 using NReflect.NREntities;
 using NReflect.NRMembers;
 
@@ -179,6 +180,16 @@ namespace NReflect.Filter
     public bool Reflect(NRProperty nrProperty)
     {
       return !Filter.Reflect(nrProperty);
+    }
+
+    /// <summary>
+    /// Determines if an attribute will be reflected.
+    /// </summary>
+    /// <param name="nrAttribute">The attribute to test.</param>
+    /// <returns><c>True</c> if the attribute should be reflected.</returns>
+    public bool Reflect(NRAttribute nrAttribute)
+    {
+      return !Filter.Reflect(nrAttribute);
     }
 
     #endregion

@@ -51,6 +51,7 @@ namespace NReflectRunner
       IncludeFilter includeFilter = new IncludeFilter();
       includeFilter.Rules.Add(new FilterRule(FilterModifiers.AllModifiers, FilterElements.Class));
       includeFilter.Rules.Add(new FilterRule(FilterModifiers.AllModifiers, FilterElements.Field));
+      includeFilter.Rules.Add(new FilterRule(FilterModifiers.AllModifiers, FilterElements.Attribute));
 
       StatisticFilter statisticFilter = new StatisticFilter(allFilter);
 
@@ -118,6 +119,7 @@ namespace NReflectRunner
       Console.WriteLine("Properties  : {0}/{1}", statisticFilter.ReflectedProperties, statisticFilter.ReflectedProperties + statisticFilter.IgnoredProperties);
       Console.WriteLine("Events      : {0}/{1}", statisticFilter.ReflectedEvents, statisticFilter.ReflectedEvents + statisticFilter.IgnoredEvents);
       Console.WriteLine("Operators   : {0}/{1}", statisticFilter.ReflectedOperators, statisticFilter.ReflectedOperators + statisticFilter.IgnoredOperators);
+      Console.WriteLine("Attributes  : {0}/{1}", statisticFilter.ReflectedAttributes, statisticFilter.ReflectedAttributes + statisticFilter.IgnoredAttributes);
     }
   }
 }

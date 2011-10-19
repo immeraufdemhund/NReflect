@@ -1143,7 +1143,12 @@ namespace NReflect
             nrAttribute.NamedValues.Add(argument.MemberInfo.Name, GetAttributeValue(argument.TypedValue));
           }
         }
-        attributes.Add(nrAttribute);
+
+        //Ask the filter if the attribute should be in the result.
+        if (Filter.Reflect(nrAttribute))
+        {
+          attributes.Add(nrAttribute);
+        }
       }
 
       return attributes;

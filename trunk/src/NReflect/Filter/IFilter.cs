@@ -16,6 +16,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with NReflect. If not, see <http://www.gnu.org/licenses/>.
 
+using NReflect.NRAttributes;
 using NReflect.NREntities;
 using NReflect.NRMembers;
 
@@ -109,5 +110,12 @@ namespace NReflect.Filter
     /// <param name="nrProperty">The property to test.</param>
     /// <returns><c>True</c> if the property should be reflected.</returns>
     bool Reflect(NRProperty nrProperty);
+
+    /// <summary>
+    /// Determines if an attribute will be reflected.
+    /// </summary>
+    /// <param name="nrAttribute">The attribute to test.</param>
+    /// <returns><c>True</c> if the attribute should be reflected.</returns>
+    bool Reflect(NRAttribute nrAttribute);
   }
 }
