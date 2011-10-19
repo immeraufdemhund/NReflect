@@ -25,6 +25,7 @@ using System.Runtime.CompilerServices;
 using System.Text;
 using NReflect.Filter;
 using NReflect.Modifier;
+using NReflect.NRAttributes;
 using NReflect.NREntities;
 using NReflect.NRMembers;
 using NReflect.NRParameters;
@@ -159,6 +160,7 @@ namespace NReflect
       nrAssembly.FullName = assembly.FullName;
       nrAssembly.Source = fileName;
 
+      ReflectAttributes(CustomAttributeData.GetCustomAttributes(assembly), nrAssembly);
       ReflectTypes(assembly.GetTypes());
 
       return nrAssembly;
@@ -459,6 +461,8 @@ namespace NReflect
       //corrected when adding the nesting relationships.
       nrTypeBase.AccessModifier = GetTypeAccessModifier(type);
 
+      ReflectAttributes(CustomAttributeData.GetCustomAttributes(type), nrTypeBase);
+
       //Fill up the dictionaries
       if(type.FullName != null)
       {
@@ -499,6 +503,7 @@ namespace NReflect
                               Type = GetType(eventInfo.EventHandlerType, eventInfo),
                               TypeFullName = eventInfo.EventHandlerType.FullName ?? eventInfo.EventHandlerType.Name
                             };
+        ReflectAttributes(CustomAttributeData.GetCustomAttributes(eventInfo), nrEvent);
 
         if(!(nrCompositeType is NRInterface))
         {
@@ -552,6 +557,7 @@ namespace NReflect
                               Type = GetType(fieldInfo.FieldType, fieldInfo),
                               TypeFullName = fieldInfo.FieldType.FullName ?? fieldInfo.FieldType.Name
                             };
+        ReflectAttributes(CustomAttributeData.GetCustomAttributes(fieldInfo), nrField);
 
         Type[] customModifiers = fieldInfo.GetRequiredCustomModifiers();
         if(customModifiers.Contains(typeof(IsVolatile)))
@@ -605,6 +611,7 @@ namespace NReflect
                                           OperationModifier = GetOperationModifier(constructorInfo)
                                         };
         ReflectParameters(constructorInfo, nrConstructor.Parameters);
+        ReflectAttributes(CustomAttributeData.GetCustomAttributes(constructorInfo), nrConstructor);
 
         //Ask the filter if the constructor should be in the result.
         if(Filter.Reflect(nrConstructor))
@@ -668,7 +675,7 @@ namespace NReflect
           }
         }
 
-        NROperation nrOperation;
+        NRReturnValueOperation nrOperation;
         if(isOperator)
         {
           nrOperation = new NROperator();
@@ -690,6 +697,8 @@ namespace NReflect
         ChangeOperationModifierIfOverwritten(type, methodInfo, nrOperation);
 
         ReflectParameters(methodInfo, nrOperation.Parameters);
+        ReflectAttributes(CustomAttributeData.GetCustomAttributes(methodInfo), nrOperation);
+        nrOperation.ReturnValueAttributes.AddRange(GetAttributes(CustomAttributeData.GetCustomAttributes(methodInfo)));
 
         if(isOperator)
         {
@@ -783,6 +792,8 @@ namespace NReflect
         nrProperty.HasGetter = propertyInfo.CanRead;
         nrProperty.HasSetter = propertyInfo.CanWrite;
 
+        ReflectAttributes(CustomAttributeData.GetCustomAttributes(propertyInfo), nrProperty);
+
         //Ask the filter if the property should be in the result.
         if(Filter.Reflect(nrProperty))
         {
@@ -808,6 +819,7 @@ namespace NReflect
                                       TypeFullName = parameter.ParameterType.FullName ?? parameter.ParameterType.Name,
                                       ParameterModifier = ParameterModifier.In
                                     };
+        ReflectAttributes(CustomAttributeData.GetCustomAttributes(parameter), nrParameter);
         if(parameter.ParameterType.Name.EndsWith("&"))
         {
           //This is a out or ref-parameter, otherwise it would not have the '&'
@@ -829,6 +841,18 @@ namespace NReflect
 
         nrParameters.Add(nrParameter);
       }
+    }
+
+    /// <summary>
+    /// Reflects the given attributes and stores them into the given
+    /// <see cref="IAttributable"/> instance.
+    /// </summary>
+    /// <param name="attributeDatas">The attributes to reflect.</param>
+    /// <param name="attributable">An instance of <see cref="IAttributable"/>
+    /// to store the reflected attributes to.</param>
+    private void ReflectAttributes(IEnumerable<CustomAttributeData> attributeDatas, IAttributable attributable)
+    {
+      attributable.Attributes.AddRange(GetAttributes(attributeDatas));
     }
 
     #endregion
@@ -1095,25 +1119,83 @@ namespace NReflect
     }
 
     /// <summary>
+    /// Reflects the given attributes and returns them as a list.
+    /// </summary>
+    /// <param name="attributeDatas">The attributes to reflect.</param>
+    /// <returns>A list containing the reflected attributes.</returns>
+    private IEnumerable<NRAttribute> GetAttributes(IEnumerable<CustomAttributeData> attributeDatas)
+    {
+      List<NRAttribute> attributes = new List<NRAttribute>();
+      foreach(CustomAttributeData attributeData in attributeDatas)
+      {
+        NRAttribute nrAttribute = new NRAttribute
+                                    {
+                                      Name = GetTypeName(attributeData.Constructor.DeclaringType)
+                                    };
+        foreach(CustomAttributeTypedArgument argument in attributeData.ConstructorArguments)
+        {
+          nrAttribute.Values.Add(GetAttributeValue(argument));
+        }
+        if(attributeData.NamedArguments != null)
+        {
+          foreach(CustomAttributeNamedArgument argument in attributeData.NamedArguments)
+          {
+            nrAttribute.NamedValues.Add(argument.MemberInfo.Name, GetAttributeValue(argument.TypedValue));
+          }
+        }
+        attributes.Add(nrAttribute);
+      }
+
+      return attributes;
+    }
+
+    /// <summary>
+    /// Gets an instance of <see cref="NRAttributeValue"/> initialized with
+    /// values of the given <see cref="CustomAttributeTypedArgument"/>.
+    /// </summary>
+    /// <param name="argument">A <see cref="CustomAttributeTypedArgument"/> to take the values from.</param>
+    /// <returns>A new and initialized <see cref="NRAttributeValue"/>.</returns>
+    private NRAttributeValue GetAttributeValue(CustomAttributeTypedArgument argument)
+    {
+      NRAttributeValue nrAttributeValue = new NRAttributeValue
+                                            {
+                                              Type = argument.ArgumentType.FullName,
+                                              Value = argument.Value
+                                            };
+      if(argument.ArgumentType.FullName == "System.Type")
+      {
+        nrAttributeValue.Value = argument.Value.ToString();
+      }
+
+      return nrAttributeValue;
+    }
+
+    /// <summary>
     /// Gets a list containing the the type parameters which are created from
     /// the given types.
     /// </summary>
     /// <param name="genericArguments">The types of a generic type.</param>
     /// <returns>A list containing the type parameters.</returns>
-    private static IEnumerable<NRTypeParameter> GetTypeParameters(Type[] genericArguments)
+    private IEnumerable<NRTypeParameter> GetTypeParameters(Type[] genericArguments)
     {
       List<NRTypeParameter> nrTypeParameters = new List<NRTypeParameter>(genericArguments.Length);
       foreach(Type genericArgument in genericArguments)
       {
-        NRTypeParameter nrTypeParameter = new NRTypeParameter();
-        nrTypeParameter.Name = genericArgument.Name;
         GenericParameterAttributes attributes = genericArgument.GenericParameterAttributes;
-        nrTypeParameter.IsStruct = (attributes & GenericParameterAttributes.NotNullableValueTypeConstraint) != 0;
-        nrTypeParameter.IsClass = (attributes & GenericParameterAttributes.ReferenceTypeConstraint) != 0;
+
+        NRTypeParameter nrTypeParameter = new NRTypeParameter
+                                            {
+                                              Name = genericArgument.Name,
+                                              IsStruct =
+                                                (attributes & GenericParameterAttributes.NotNullableValueTypeConstraint) !=
+                                                0,
+                                              IsClass =
+                                                (attributes & GenericParameterAttributes.ReferenceTypeConstraint) != 0,
+                                              IsIn = (attributes & GenericParameterAttributes.Contravariant) != 0,
+                                              IsOut = (attributes & GenericParameterAttributes.Covariant) > 0
+                                            };
         nrTypeParameter.IsConstructor = (attributes & GenericParameterAttributes.DefaultConstructorConstraint) != 0 &&
                                         !nrTypeParameter.IsStruct;
-        nrTypeParameter.IsIn = (attributes & GenericParameterAttributes.Contravariant) != 0;
-        nrTypeParameter.IsOut = (attributes & GenericParameterAttributes.Covariant) > 0;
         Type[] genericParameterConstraints = genericArgument.GetGenericParameterConstraints();
         foreach(Type genericParameterConstraint in genericParameterConstraints)
         {
@@ -1122,6 +1204,9 @@ namespace NReflect
             nrTypeParameter.BaseTypes.Add(GetTypeName(genericParameterConstraint));
           }
         }
+
+        ReflectAttributes(CustomAttributeData.GetCustomAttributes(genericArgument), nrTypeParameter);
+
         nrTypeParameters.Add(nrTypeParameter);
       }
 

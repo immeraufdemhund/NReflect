@@ -17,49 +17,40 @@
 // along with NReflect. If not, see <http://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using NReflect.NRParameters;
 
-namespace NReflect.NREntities
+namespace NReflect.NRAttributes
 {
   /// <summary>
-  /// Represents a type which can be customized via generics.
+  /// Represents a value used to initialize an attribute which is reflected by NReflect.
   /// </summary>
   [Serializable]
-  public abstract class NRGenericType : NRTypeBase, IGeneric
+  public class NRAttributeValue
   {
-    // ========================================================================
-    // Con- / Destruction
-
-    #region === Con- / Destruction
-
-    /// <summary>
-    /// Initializes a new instance of <see cref="NRGenericType"/>.
-    /// </summary>
-    protected NRGenericType()
-    {
-      GenericTypes = new List<NRTypeParameter>();
-    }
-
-    #endregion
-
     // ========================================================================
     // Properties
 
     #region === Properties
 
     /// <summary>
-    /// Gets a list containing all type parameters of a type.
+    /// Gets or sets the name of the type of the attribute value.
     /// </summary>
-    public List<NRTypeParameter> GenericTypes { get; private set; }
+    /// <remarks>
+    /// The name is prefixed by the namespace of the type.
+    /// </remarks>
+    public string Type { get; set; }
 
     /// <summary>
-    /// Gets a value indicating wether this type is a generic.
+    /// Gets or sets the value of the attribute value.
     /// </summary>
-    public bool IsGeneric
-    {
-      get { return GenericTypes.Count > 0; }
-    }
+    /// <remarks>
+    /// If the type of the attribute value is a <see cref="System.Type"/>,
+    /// this property will hold a <see cref="string"/> instead of the
+    /// <see cref="System.Type"/>. The reason to do this is the fact that
+    /// a <see cref="System.Type"/> is not serializable. All other types
+    /// which can occur as an attribute value are serializable since they
+    /// are of any number, string, boolean or enum type.
+    /// </remarks>
+    public object Value { get; set; }
 
     #endregion
   }

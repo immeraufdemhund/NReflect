@@ -16,6 +16,7 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with NReflect. If not, see <http://www.gnu.org/licenses/>.
 
+using NReflect.NRAttributes;
 using NReflect.NREntities;
 using NReflect.NRMembers;
 using NReflect.NRParameters;
@@ -116,5 +117,11 @@ namespace NReflect
     /// </summary>
     /// <param name="nrEnumValue">The <see cref="NREnumValue"/> to visit.</param>
     void Visit(NREnumValue nrEnumValue);
+
+    /// <summary>
+    /// Visit a <see cref="NRAttribute"/>.
+    /// </summary>
+    /// <param name="nrAttribute">The <see cref="NRAttribute"/> to visit.</param>
+    void Visit(NRAttribute nrAttribute);
   }
 }

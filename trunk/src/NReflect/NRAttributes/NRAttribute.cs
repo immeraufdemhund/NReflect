@@ -18,15 +18,14 @@
 
 using System;
 using System.Collections.Generic;
-using NReflect.NRAttributes;
 
-namespace NReflect.NRParameters
+namespace NReflect.NRAttributes
 {
   /// <summary>
-  /// Represents a type parameter which is reflected by NReflect.
+  /// Represents an attribute which is reflected by NReflect.
   /// </summary>
   [Serializable]
-  public class NRTypeParameter : IVisitable, IAttributable
+  public class NRAttribute : IVisitable
   {
     // ========================================================================
     // Con- / Destruction
@@ -34,12 +33,12 @@ namespace NReflect.NRParameters
     #region === Con- / Destruction
 
     /// <summary>
-    /// Initializes a new instance of <see cref="NRTypeParameter"/>.
+    /// Initializes a new instance of <see cref="NRAttribute"/>.
     /// </summary>
-    public NRTypeParameter()
+    public NRAttribute()
     {
-      Attributes = new List<NRAttribute>();
-      BaseTypes = new List<string>();
+      Values = new List<NRAttributeValue>();
+      NamedValues = new Dictionary<string, NRAttributeValue>();
     }
 
     #endregion
@@ -50,44 +49,19 @@ namespace NReflect.NRParameters
     #region === Properties
 
     /// <summary>
-    /// Gets or sets the name of the type parameter.
+    /// Gets or sets the name of the attribute.
     /// </summary>
     public string Name { get; set; }
 
     /// <summary>
-    /// Gets a list of types representing the constraints of the type parameter.
+    /// Gets a list containing all positional values used to create the attribute.
     /// </summary>
-    public List<string> BaseTypes { get; private set; }
+    public List<NRAttributeValue> Values { get; private set; }
 
     /// <summary>
-    /// Gets or sets a value that indicates wether the generic parameter has a class constraint.
+    /// Gets a list containing all named values used to create the attribute.
     /// </summary>
-    public bool IsClass { get; set; }
-
-    /// <summary>
-    /// Gets or sets a value that indicates wether the generic parameter has a struct constraint.
-    /// </summary>
-    public bool IsStruct { get; set; }
-
-    /// <summary>
-    /// Gets or sets a value that indicates wether the generic parameter has a default constructor constraint.
-    /// </summary>
-    public bool IsConstructor { get; set; }
-
-    /// <summary>
-    /// Gets or sets a value that indicates wether the generic parameter has a contravariant constraint.
-    /// </summary>
-    public bool IsIn { get; set; }
-
-    /// <summary>
-    /// Gets or sets a value that indicates wether the generic parameter has a covariant constraint.
-    /// </summary>
-    public bool IsOut { get; set; }
-
-    /// <summary>
-    /// Gets a list of attributes of the type parameter.
-    /// </summary>
-    public List<NRAttribute> Attributes { get; private set; }
+    public Dictionary<string, NRAttributeValue> NamedValues { get; private set; }
 
     #endregion
 

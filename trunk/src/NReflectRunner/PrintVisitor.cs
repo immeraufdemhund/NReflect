@@ -22,9 +22,11 @@ using System.IO;
 using System.Text;
 using NReflect;
 using NReflect.Modifier;
+using NReflect.NRAttributes;
 using NReflect.NREntities;
 using NReflect.NRMembers;
 using NReflect.NRParameters;
+using ParameterModifier = NReflect.Modifier.ParameterModifier;
 
 namespace NReflectRunner
 {
@@ -39,7 +41,7 @@ namespace NReflectRunner
 
     #region === Fields
 
-    private TextWriter writer;
+    private readonly TextWriter writer;
 
     private int indent;
 
@@ -68,6 +70,10 @@ namespace NReflectRunner
 
     public void Visit(NRAssembly nrAssembly)
     {
+      OutputLine("Assembly " + nrAssembly.FullName);
+      OutputLine("  Source " + nrAssembly.Source);
+      VisitAttributes(nrAssembly);
+      OutputLine("");
       PrintEntities("delegates", nrAssembly.Delegates);
       PrintEntities("interfaces", nrAssembly.Interfaces);
       PrintEntities("structs", nrAssembly.Structs);
@@ -77,11 +83,9 @@ namespace NReflectRunner
 
     public void Visit(NRClass nrClass)
     {
+      VisitAttributes(nrClass);
       Output(ToString(nrClass.AccessModifier) + ToString(nrClass.ClassModifier) + "class " + nrClass.Name + GetGenericDefinition(nrClass));
-      foreach (NRTypeParameter nrTypeParameter in nrClass.GenericTypes)
-      {
-        nrTypeParameter.Accept(this);
-      }
+      VisitTypeParameters(nrClass);
       OutputLine("");
       OutputLine("{");
       indent++;
@@ -119,11 +123,9 @@ namespace NReflectRunner
 
     public void Visit(NRInterface nrInterface)
     {
+      VisitAttributes(nrInterface);
       Output(ToString(nrInterface.AccessModifier) + "interface " + nrInterface.Name + GetGenericDefinition(nrInterface));
-      foreach (NRTypeParameter nrTypeParameter in nrInterface.GenericTypes)
-      {
-        nrTypeParameter.Accept(this);
-      }
+      VisitTypeParameters(nrInterface);
       OutputLine("");
       OutputLine("{");
       indent++;
@@ -145,23 +147,19 @@ namespace NReflectRunner
 
     public void Visit(NRDelegate nrDelegate)
     {
+      VisitAttributes(nrDelegate);
       Output(ToString(nrDelegate.AccessModifier) + "delegate " + ToString(nrDelegate.ReturnType) + " " + nrDelegate.Name + GetGenericDefinition(nrDelegate) + "(");
       PrintParameters(nrDelegate.Parameters);
       Output(")", 0);
-      foreach (NRTypeParameter nrTypeParameter in nrDelegate.GenericTypes)
-      {
-        nrTypeParameter.Accept(this);
-      }
+      VisitTypeParameters(nrDelegate);
       OutputLine("");
     }
 
     public void Visit(NRStruct nrStruct)
     {
+      VisitAttributes(nrStruct);
       Output(ToString(nrStruct.AccessModifier) + "struct " + nrStruct.Name + GetGenericDefinition(nrStruct));
-      foreach (NRTypeParameter nrTypeParameter in nrStruct.GenericTypes)
-      {
-        nrTypeParameter.Accept(this);
-      }
+      VisitTypeParameters(nrStruct);
       OutputLine("");
       OutputLine("{");
       indent++;
@@ -199,6 +197,7 @@ namespace NReflectRunner
 
     public void Visit(NREnum nrEnum)
     {
+      VisitAttributes(nrEnum);
       OutputLine(ToString(nrEnum.AccessModifier) + "enum " + nrEnum.Name);
       OutputLine("{");
       indent++;
@@ -212,6 +211,7 @@ namespace NReflectRunner
 
     public void Visit(NRField nrField)
     {
+      VisitAttributes(nrField);
       string value = "";
       if(nrField.IsConstant)
       {
@@ -222,6 +222,7 @@ namespace NReflectRunner
 
     public void Visit(NRProperty nrProperty)
     {
+      VisitAttributes(nrProperty);
       string methods = "";
       if(nrProperty.HasGetter)
       {
@@ -244,18 +245,19 @@ namespace NReflectRunner
 
     public void Visit(NRMethod nrMethod)
     {
+      VisitAttributes(nrMethod);
+      VisitReturnValueAttributes(nrMethod);
       Output(ToString(nrMethod.AccessModifier) + ToString(nrMethod.OperationModifier) + ToString(nrMethod.Type) + " " + nrMethod.Name + GetGenericDefinition(nrMethod) + "(");
       PrintParameters(nrMethod.Parameters, nrMethod.IsExtensionMethod);
       Output(")", 0);
-      foreach (NRTypeParameter nrTypeParameter in nrMethod.GenericTypes)
-      {
-        nrTypeParameter.Accept(this);
-      }
+      VisitTypeParameters(nrMethod);
       OutputLine("", 0);
     }
 
     public void Visit(NROperator nrOperator)
     {
+      VisitAttributes(nrOperator);
+      VisitReturnValueAttributes(nrOperator);
       string returnType = ToString(nrOperator.Type);
       if (!String.IsNullOrWhiteSpace(returnType))
       {
@@ -268,6 +270,7 @@ namespace NReflectRunner
 
     public void Visit(NRConstructor nrConstructor)
     {
+      VisitAttributes(nrConstructor);
       Output(ToString(nrConstructor.AccessModifier) + ToString(nrConstructor.OperationModifier) + nrConstructor.Name + "(");
       PrintParameters(nrConstructor.Parameters);
       OutputLine(")", 0);
@@ -275,6 +278,7 @@ namespace NReflectRunner
 
     public void Visit(NREvent nrEvent)
     {
+      VisitAttributes(nrEvent);
       Output(ToString(nrEvent.AccessModifier) + "event " + ToString(nrEvent.Type) + " " + nrEvent.Name + "(");
       PrintParameters(nrEvent.Parameters);
       OutputLine(")", 0);
@@ -282,6 +286,10 @@ namespace NReflectRunner
 
     public void Visit(NRParameter nrParameter)
     {
+      foreach(NRAttribute nrAttribute in nrParameter.Attributes)
+      {
+        Output(GetAttribute(nrAttribute) + " ", 0);
+      }
       Output(ToString(nrParameter.ParameterModifier) + ToString(nrParameter.Type) + " " + nrParameter.Name, 0);
       if(nrParameter.ParameterModifier == ParameterModifier.Optional)
       {
@@ -325,6 +333,50 @@ namespace NReflectRunner
         value = " = " + nrEnumValue.Value;
       }
       OutputLine(nrEnumValue.Name + value + ",");
+    }
+
+    public void Visit(NRAttribute nrAttribute)
+    {
+      OutputLine(GetAttribute(nrAttribute));
+    }
+
+    /// <summary>
+    /// Visits all type parameters of the given <see cref="IGeneric"/>.
+    /// </summary>
+    /// <param name="generic">The type parameters of this <see cref="IGeneric"/>
+    /// gets visited.</param>
+    private void VisitTypeParameters(IGeneric generic)
+    {
+      foreach(NRTypeParameter nrTypeParameter in generic.GenericTypes)
+      {
+        nrTypeParameter.Accept(this);
+      }
+    }
+
+    /// <summary>
+    /// Visits all attributes of the given <see cref="IAttributable"/>.
+    /// </summary>
+    /// <param name="attributable">The attributes of this <see cref="IAttributable"/>
+    /// gets visited.</param>
+    private void VisitAttributes(IAttributable attributable)
+    {
+      foreach(NRAttribute nrAttribute in attributable.Attributes)
+      {
+        nrAttribute.Accept(this);
+      }
+    }
+
+    /// <summary>
+    /// Visits all return attributes of the given <see cref="NRReturnValueOperation"/>.
+    /// </summary>
+    /// <param name="nrReturnValueOperation">The attributes of this <see cref="NRReturnValueOperation"/>
+    /// gets visited.</param>
+    private void VisitReturnValueAttributes(NRReturnValueOperation nrReturnValueOperation)
+    {
+      foreach(NRAttribute nrAttribute in nrReturnValueOperation.ReturnValueAttributes)
+      {
+        OutputLine(GetAttribute(nrAttribute, true));
+      }
     }
 
     /// <summary>
@@ -464,45 +516,99 @@ namespace NReflectRunner
     }
 
     /// <summary>
-    /// Returns a string containing the type parameter definitions.
+    /// Gets a string representing the C#-Code for an attribute.
     /// </summary>
-    /// <param name="nrGenericType">The type to take the definitions from.</param>
-    /// <returns>A string containing the type parameter definitions.</returns>
-    private string GetGenericDefinition(NRGenericType nrGenericType)
+    /// <param name="nrAttribute">The attribute to show.</param>
+    /// <param name="returnAttribute">Set to true if the attribute is taken from a return value.</param>
+    /// <returns>A string representing the C#-Code for an attribute.</returns>
+    private static string GetAttribute(NRAttribute nrAttribute, bool returnAttribute = false)
     {
-      if(!nrGenericType.IsGeneric)
+      StringBuilder result = new StringBuilder("[");
+      if(returnAttribute)
       {
-        return "";
+        result.Append("return: ");
       }
+      result.Append(nrAttribute.Name.EndsWith("Attribute")
+                      ? nrAttribute.Name.Substring(0, nrAttribute.Name.Length - "Attribute".Length)
+                      : nrAttribute.Name);
+      if(nrAttribute.Values.Count > 0 || nrAttribute.NamedValues.Count > 0)
+      {
+        result.Append("(");
+        foreach(NRAttributeValue value in nrAttribute.Values)
+        {
+          result.Append(GetAttributeValueString(value) + ", ");
+        }
+        foreach(string key in nrAttribute.NamedValues.Keys)
+        {
+          result.AppendFormat("{0} = {1}, ", key, GetAttributeValueString(nrAttribute.NamedValues[key]));
+        }
+        result.Length -= 2;
+        result.Append(")");
+      }
+      result.Append("]");
+      return result.ToString();
+    }
 
-      return GetGenericDefinition(nrGenericType.GenericTypes);
+    /// <summary>
+    /// Gets the C#-Code representing the value of the attribute.
+    /// </summary>
+    /// <param name="value">The attribute value to get the code for.</param>
+    /// <returns>The C#-Code for the value.</returns>
+    private static string GetAttributeValueString(NRAttributeValue value)
+    {
+      if(value.Type == "System.String")
+      {
+        return "\"" + value.Value + "\"";
+      }
+      if(value.Type == "System.Type")
+      {
+        return "typeof(" + value.Value + ")";
+      }
+      Type type = Type.GetType(value.Type, false);
+      if(type != null && type.IsEnum)
+      {
+        try
+        {
+          string format = Enum.Format(type, value.Value, "F");
+          StringBuilder result = new StringBuilder();
+          foreach (string constant in format.Split(new[] { ", " }, StringSplitOptions.RemoveEmptyEntries))
+          {
+            result.Append(type.FullName + "." + constant + " || ");
+          }
+          if (result.Length > 0)
+          {
+            result.Length -= 4;
+          }
+
+          return result.ToString();
+        }
+        catch(Exception)
+        {
+          return value.Value.ToString();
+        }
+      }
+      return value.Value.ToString();
     }
 
     /// <summary>
     /// Returns a string containing the type parameter definitions.
     /// </summary>
-    /// <param name="nrMethod">The method to take the definitions from.</param>
+    /// <param name="generic">An instance of <see cref="IGeneric"/> to take the generic parameters from.</param>
     /// <returns>A string containing the type parameter definitions.</returns>
-    private string GetGenericDefinition(NRMethod nrMethod)
+    private static string GetGenericDefinition(IGeneric generic)
     {
-      if(!nrMethod.IsGeneric)
+      if (!generic.IsGeneric)
       {
         return "";
       }
-
-      return GetGenericDefinition(nrMethod.GenericTypes);
-    }
-
-    /// <summary>
-    /// Returns a string containing the type parameter definitions.
-    /// </summary>
-    /// <param name="nrTypeParameters">A list of <see cref="NRTypeParameter"/>s to return.</param>
-    /// <returns>A string containing the type parameter definitions.</returns>
-    private static string GetGenericDefinition(IEnumerable<NRTypeParameter> nrTypeParameters)
-    {
+      IEnumerable<NRTypeParameter> nrTypeParameters = generic.GenericTypes;
       StringBuilder result = new StringBuilder("<");
       foreach (NRTypeParameter nrTypeParameter in nrTypeParameters)
       {
+        foreach(NRAttribute nrAttribute in nrTypeParameter.Attributes)
+        {
+          result.Append(GetAttribute(nrAttribute) + " ");
+        }
         if(nrTypeParameter.IsIn)
         {
           result.Append("in ");

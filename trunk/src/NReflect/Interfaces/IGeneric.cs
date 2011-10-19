@@ -1,4 +1,4 @@
-// NReflect - Easy assembly reflection
+﻿// NReflect - Easy assembly reflection
 // Copyright (C) 2010-2011 Malte Ried
 //
 // This file is part of NReflect.
@@ -16,30 +16,25 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with NReflect. If not, see <http://www.gnu.org/licenses/>.
 
-using System;
+using System.Collections.Generic;
+using NReflect.NRParameters;
 
-namespace NReflect.NRMembers
+namespace NReflect
 {
   /// <summary>
-  /// Represents an operator of a type which is reflected by NReflect.
+  /// Classes implementing this interface can represent a generic
+  /// entity or member.
   /// </summary>
-  [Serializable]
-  public class NROperator : NRReturnValueOperation
+  public interface IGeneric
   {
-    // ========================================================================
-    // Methods
-
-    #region === Methods
+    /// <summary>
+    /// Gets a list containing all type parameters.
+    /// </summary>
+    List<NRTypeParameter> GenericTypes { get; }
 
     /// <summary>
-    /// Accept an <see cref="IVisitor"/> instance on the implementing class and all its children.
+    /// Gets a value indicating wether this is generic.
     /// </summary>
-    /// <param name="visitor">The <see cref="IVisitor"/> instance to accept.</param>
-    public override void Accept(IVisitor visitor)
-    {
-      visitor.Visit(this);
-    }
-
-    #endregion
+    bool IsGeneric { get; }
   }
 }

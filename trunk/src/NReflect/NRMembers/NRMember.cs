@@ -17,7 +17,9 @@
 // along with NReflect. If not, see <http://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using NReflect.Modifier;
+using NReflect.NRAttributes;
 
 namespace NReflect.NRMembers
 {
@@ -25,8 +27,23 @@ namespace NReflect.NRMembers
   /// Represents a member of a type which is reflected by NReflect.
   /// </summary>
   [Serializable]
-  public abstract class NRMember : IVisitable
+  public abstract class NRMember : IVisitable, IAttributable
   {
+    // ========================================================================
+    // Con- / Destruction
+
+    #region === Con- / Destruction
+
+    /// <summary>
+    /// Initializes a new instance of <see cref="NRMember"/>.
+    /// </summary>
+    protected NRMember()
+    {
+      Attributes = new List<NRAttribute>();
+    }
+
+    #endregion
+
     // ========================================================================
     // Properties
 
@@ -51,6 +68,11 @@ namespace NReflect.NRMembers
     /// Gets or sets the full name of the type.
     /// </summary>
     public string TypeFullName { get; set; }
+
+    /// <summary>
+    /// Gets a list of attributes of the member.
+    /// </summary>
+    public List<NRAttribute> Attributes { get; private set; }
 
     #endregion
 

@@ -1,4 +1,4 @@
-// NReflect - Easy assembly reflection
+﻿// NReflect - Easy assembly reflection
 // Copyright (C) 2010-2011 Malte Ried
 //
 // This file is part of NReflect.
@@ -16,30 +16,19 @@
 // You should have received a copy of the GNU Lesser General Public License
 // along with NReflect. If not, see <http://www.gnu.org/licenses/>.
 
-using System;
+using System.Collections.Generic;
+using NReflect.NRAttributes;
 
-namespace NReflect.NRMembers
+namespace NReflect
 {
   /// <summary>
-  /// Represents an operator of a type which is reflected by NReflect.
+  /// Classes implementing this interface can have a list of attributes.
   /// </summary>
-  [Serializable]
-  public class NROperator : NRReturnValueOperation
+  public interface IAttributable
   {
-    // ========================================================================
-    // Methods
-
-    #region === Methods
-
     /// <summary>
-    /// Accept an <see cref="IVisitor"/> instance on the implementing class and all its children.
+    /// Gets a list of attributes.
     /// </summary>
-    /// <param name="visitor">The <see cref="IVisitor"/> instance to accept.</param>
-    public override void Accept(IVisitor visitor)
-    {
-      visitor.Visit(this);
-    }
-
-    #endregion
+    List<NRAttribute> Attributes { get; }
   }
 }

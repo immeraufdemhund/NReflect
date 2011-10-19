@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using NReflect.NRAttributes;
 using NReflect.NREntities;
 
 namespace NReflect
@@ -26,7 +27,7 @@ namespace NReflect
   /// Contains the reflected entities of an assembly.
   /// </summary>
   [Serializable]
-  public class NRAssembly : IVisitable
+  public class NRAssembly : IVisitable, IAttributable
   {
     // ========================================================================
     // Con- / Destruction
@@ -43,6 +44,7 @@ namespace NReflect
       Structs = new List<NRStruct>();
       Enums = new List<NREnum>();
       Delegates = new List<NRDelegate>();
+      Attributes = new List<NRAttribute>();
     }
 
     #endregion
@@ -61,6 +63,11 @@ namespace NReflect
     /// The source of the assembly. Possibly a file name.
     /// </summary>
     public string Source { get; set; }
+
+    /// <summary>
+    /// Gets a list of attributes.
+    /// </summary>
+    public List<NRAttribute> Attributes { get; private set; }
 
     /// <summary>
     /// Gets a list of reflected classes.

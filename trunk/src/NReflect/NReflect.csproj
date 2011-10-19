@@ -54,6 +54,8 @@
     <Compile Include="Filter\IFilter.cs" />
     <Compile Include="Filter\IncludeFilter.cs" />
     <Compile Include="Filter\StatisticFilter.cs" />
+    <Compile Include="Interfaces\IAttributable.cs" />
+    <Compile Include="Interfaces\IGeneric.cs" />
     <Compile Include="Modifier\AccessModifier.cs" />
     <Compile Include="Modifier\ClassModifier.cs" />
     <Compile Include="Modifier\FieldModifier.cs" />
@@ -61,6 +63,8 @@
     <Compile Include="NRAssembly.cs" />
     <Compile Include="IVisitable.cs" />
     <Compile Include="IVisitor.cs" />
+    <Compile Include="NRAttributes\NRAttribute.cs" />
+    <Compile Include="NRAttributes\NRAttributeValue.cs" />
     <Compile Include="NRCode\CSharp.cs" />
     <Compile Include="NREntities\NRClass.cs" />
     <Compile Include="NREntities\NRCompositeType.cs" />
@@ -81,6 +85,7 @@
     <Compile Include="NRMembers\NROperation.cs" />
     <Compile Include="NRMembers\NROperator.cs" />
     <Compile Include="NRMembers\NRProperty.cs" />
+    <Compile Include="NRMembers\NRReturnValueOperation.cs" />
     <Compile Include="NRParameters\NRParameter.cs" />
     <Compile Include="NRParameters\NRTypeParameter.cs" />
     <Compile Include="NRRelationships.cs" />
@@ -95,7 +100,11 @@
     <Compile Include="RelationshipCreator.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="ClassDiagram.cd" />
+    <None Include="Diagrams\Classes.cd" />
+    <None Include="Diagrams\Enums.cd" />
+    <None Include="Diagrams\Interfaces.cd" />
+    <None Include="Diagrams\Members.cd" />
+    <None Include="Diagrams\Types.cd" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

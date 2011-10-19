@@ -17,7 +17,9 @@
 // along with NReflect. If not, see <http://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using NReflect.Modifier;
+using NReflect.NRAttributes;
 
 namespace NReflect.NRParameters
 {
@@ -25,8 +27,23 @@ namespace NReflect.NRParameters
   /// Represents a parameter which is reflected by NReflect.
   /// </summary>
   [Serializable]
-  public class NRParameter : IVisitable
+  public class NRParameter : IVisitable, IAttributable
   {
+    // ========================================================================
+    // Con- / Destruction
+
+    #region === Con- / Destruction
+
+    /// <summary>
+    /// Initializes a new instance of <see cref="NRParameter"/>.
+    /// </summary>
+    public NRParameter()
+    {
+      Attributes = new List<NRAttribute>();
+    }
+
+    #endregion
+
     // ========================================================================
     // Properties
 
@@ -57,6 +74,11 @@ namespace NReflect.NRParameters
     /// <see cref="ParameterModifier"/> is set to <see cref="Modifier.ParameterModifier.Optional"/>.
     /// </summary>
     public string DefaultValue { get; set; }
+
+    /// <summary>
+    /// Gets a list of attributes of the parameter.
+    /// </summary>
+    public List<NRAttribute> Attributes { get; private set; }
 
     #endregion
 

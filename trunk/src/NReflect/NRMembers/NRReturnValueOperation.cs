@@ -1,4 +1,4 @@
-// NReflect - Easy assembly reflection
+﻿// NReflect - Easy assembly reflection
 // Copyright (C) 2010-2011 Malte Ried
 //
 // This file is part of NReflect.
@@ -17,28 +17,41 @@
 // along with NReflect. If not, see <http://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
+using NReflect.NRAttributes;
 
 namespace NReflect.NRMembers
 {
   /// <summary>
-  /// Represents an operator of a type which is reflected by NReflect.
+  /// Represents an operation which has a return value of a type which is reflected by NReflect.
   /// </summary>
   [Serializable]
-  public class NROperator : NRReturnValueOperation
+  public abstract class NRReturnValueOperation : NROperation
   {
     // ========================================================================
-    // Methods
+    // Con- / Destruction
 
-    #region === Methods
+    #region === Con- / Destruction
 
     /// <summary>
-    /// Accept an <see cref="IVisitor"/> instance on the implementing class and all its children.
+    /// Initializes a new instance of <see cref="NRReturnValueOperation"/>.
     /// </summary>
-    /// <param name="visitor">The <see cref="IVisitor"/> instance to accept.</param>
-    public override void Accept(IVisitor visitor)
+    protected NRReturnValueOperation()
     {
-      visitor.Visit(this);
+      ReturnValueAttributes = new List<NRAttribute>();
     }
+
+    #endregion
+
+    // ========================================================================
+    // Properties
+
+    #region === Properties
+
+    /// <summary>
+    /// Gets a list of attributes bound to the return value of the method.
+    /// </summary>
+    public List<NRAttribute> ReturnValueAttributes { get; private set; } 
 
     #endregion
   }

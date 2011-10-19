@@ -26,7 +26,7 @@ namespace NReflect.NRMembers
   /// Represents a method of a type which is reflected by NReflect.
   /// </summary>
   [Serializable]
-  public class NRMethod : NROperation
+  public class NRMethod : NRReturnValueOperation, IGeneric
   {
     // ========================================================================
     // Con- / Destruction

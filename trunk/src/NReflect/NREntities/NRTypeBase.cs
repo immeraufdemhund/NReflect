@@ -17,7 +17,9 @@
 // along with NReflect. If not, see <http://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using NReflect.Modifier;
+using NReflect.NRAttributes;
 
 namespace NReflect.NREntities
 {
@@ -25,8 +27,23 @@ namespace NReflect.NREntities
   /// Represents the base of all types which are reflected by NReflect.
   /// </summary>
   [Serializable]
-  public abstract class NRTypeBase : IVisitable
+  public abstract class NRTypeBase : IVisitable, IAttributable
   {
+    // ========================================================================
+    // Con- / Destruction
+
+    #region === Con- / Destruction
+
+    /// <summary>
+    /// Initializes a new instance of <see cref="NRTypeBase"/>.
+    /// </summary>
+    protected NRTypeBase()
+    {
+      Attributes = new List<NRAttribute>();
+    }
+
+    #endregion
+
     // ========================================================================
     // Properties
 
@@ -51,6 +68,11 @@ namespace NReflect.NREntities
     /// Gets or sets the type in which this type is nested.
     /// </summary>
     public string Parent { get; set; }
+
+    /// <summary>
+    /// Gets a list of attributes of the type.
+    /// </summary>
+    public List<NRAttribute> Attributes { get; private set; }
 
     #endregion
 
