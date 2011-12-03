@@ -63,20 +63,23 @@
     </ComponentConfigurations>
     <ProjectSummary>NReflect is a library which is able to reflect the types of an assembly. The reflection can be done within an extra app domain to be able to unload the reflected assembly afterwards. The results are returned as an object graph.</ProjectSummary>
     <NamespaceSummaries>
-      <NamespaceSummaryItem name="NReflect" isDocumented="True" xmlns="">This namespace covers the functionality of the NReflect library.</NamespaceSummaryItem>
-      <NamespaceSummaryItem name="NReflect.Filter" isDocumented="True" xmlns="">A filter can be used to determine which type or member to reflect. A Filter implements the &lt;see cref="IFilter"/&gt; interface contained within this namespace. Some basic filters are also available here.</NamespaceSummaryItem>
-      <NamespaceSummaryItem name="NReflect.Modifier" isDocumented="True" xmlns="">Enumerations containing the modifiers of types and members are located within this namespace.</NamespaceSummaryItem>
-      <NamespaceSummaryItem name="NReflect.NRCode" isDocumented="True" xmlns="">Contains classes with extension methods which create code from reflected types and elements.</NamespaceSummaryItem>
-      <NamespaceSummaryItem name="NReflect.NREntities" isDocumented="True" xmlns="">Reflected types result in instances of classes contained within this namespace.</NamespaceSummaryItem>
-      <NamespaceSummaryItem name="NReflect.NRMembers" isDocumented="True" xmlns="">Each member of a reflected type will be represented by an instance of classes contained within this namespace.</NamespaceSummaryItem>
-      <NamespaceSummaryItem name="NReflect.NRParameters" isDocumented="True" xmlns="">This namespace contains classes representing parameters of reflected types and members.</NamespaceSummaryItem>
-      <NamespaceSummaryItem name="NReflect.NRRelationship" isDocumented="True" xmlns="">Relationships are represented whith the types within this namespace.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="NReflect" isDocumented="True">This namespace covers the functionality of the NReflect library.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="NReflect.Filter" isDocumented="True">A filter can be used to determine which type or member to reflect. A Filter implements the &lt;see cref="IFilter"/&gt; interface contained within this namespace. Some basic filters are also available here.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="NReflect.Modifier" isDocumented="True">Enumerations containing the modifiers of types and members are located within this namespace.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="NReflect.NRCode" isDocumented="True">Contains classes with extension methods which create code from reflected types and elements.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="NReflect.NREntities" isDocumented="True">Reflected types result in instances of classes contained within this namespace.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="NReflect.NRMembers" isDocumented="True">Each member of a reflected type will be represented by an instance of classes contained within this namespace.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="NReflect.NRParameters" isDocumented="True">This namespace contains classes representing parameters of reflected types and members.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="NReflect.NRRelationship" isDocumented="True">Relationships are represented whith the types within this namespace.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="NReflect.NRAttributes" isDocumented="True">Contains all classes needed to represent reflected attributes.</NamespaceSummaryItem>
     </NamespaceSummaries>
     <HelpTitle>NReflect</HelpTitle>
     <BinaryTOC>True</BinaryTOC>
     <ProductTitle>NReflect</ProductTitle>
     <VendorName>Malte Ried</VendorName>
     <KeepLogFile>False</KeepLogFile>
+    <RootNamespaceContainer>True</RootNamespaceContainer>
+    <RootNamespaceTitle>Reference</RootNamespaceTitle>
   </PropertyGroup>
   <!-- There are no properties for these groups.  AnyCPU needs to appear in
        order for Visual Studio to perform the build.  The others are optional
@@ -104,6 +107,16 @@
     <ContentLayout Include="HelpContent\Layout.content" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="HelpContent\SampleExcludeFilter.aml" />
+    <None Include="HelpContent\SampleIncludeFilter.aml" />
+    <None Include="HelpContent\SampleUseStatisticsFilter.aml" />
+    <None Include="HelpContent\Samples.aml" />
+    <None Include="HelpContent\Samples.aml" />
+    <None Include="HelpContent\Members.aml" />
+    <None Include="HelpContent\Types.aml" />
+    <None Include="HelpContent\AssemblyModule.aml" />
+    <None Include="HelpContent\Attributes.aml" />
+    <None Include="HelpContent\Generics.aml" />
     <None Include="HelpContent\SampleReflect.aml" />
     <None Include="HelpContent\Visitor.aml" />
     <None Include="HelpContent\Visitor.aml" />
@@ -112,6 +125,18 @@
     <None Include="HelpContent\NReflect.aml" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="HelpContent\AssemblyModule.png">
+      <ImageId>AssemblyModule</ImageId>
+      <AlternateText>Assembly Module</AlternateText>
+    </Image>
+    <Image Include="HelpContent\Attributes.png">
+      <ImageId>Attributes</ImageId>
+      <AlternateText>Attributes</AlternateText>
+    </Image>
+    <Image Include="HelpContent\Generics.png">
+      <ImageId>Generics</ImageId>
+      <AlternateText>Generics</AlternateText>
+    </Image>
     <Image Include="HelpContent\Visitor.png">
       <ImageId>Visitor</ImageId>
       <AlternateText>Visitor</AlternateText>

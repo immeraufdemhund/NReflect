@@ -186,6 +186,16 @@ namespace NReflect.Filter
     /// </summary>
     public int IgnoredAttributes { get; private set; }
 
+    /// <summary>
+    /// The count of reflected modules.
+    /// </summary>
+    public int ReflectedModules { get; private set; }
+
+    /// <summary>
+    /// The count of modules which are not reflected by the filter.
+    /// </summary>
+    public int IgnoredModules { get; private set; }
+
     #endregion
 
     // ========================================================================
@@ -398,6 +408,22 @@ namespace NReflect.Filter
         return true;
       }
       IgnoredAttributes++;
+      return false;
+    }
+
+    /// <summary>
+    /// Determines if a module will be reflected.
+    /// </summary>
+    /// <param name="nrModule">The module to test.</param>
+    /// <returns><c>True</c> if the module should be reflected.</returns>
+    public bool Reflect(NRModule nrModule)
+    {
+      if(Filter.Reflect(nrModule))
+      {
+        ReflectedModules++;
+        return true;
+      }
+      IgnoredModules++;
       return false;
     }
 

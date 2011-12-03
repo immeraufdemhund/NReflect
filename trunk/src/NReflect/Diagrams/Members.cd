@@ -21,7 +21,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="NReflect.NRMembers.NRMethod">
-    <Position X="4.5" Y="8.25" Width="1.5" />
+    <Position X="4.25" Y="8.25" Width="1.75" />
     <Members>
       <Method Name="Accept" Hidden="true" />
       <Method Name="NRMethod" Hidden="true" />
@@ -63,7 +63,7 @@
     </TypeIdentifier>
   </Class>
   <Class Name="NReflect.NRMembers.NROperator">
-    <Position X="6.5" Y="8.25" Width="1.5" />
+    <Position X="6.5" Y="8.25" Width="1.75" />
     <Members>
       <Method Name="Accept" Hidden="true" />
     </Members>
@@ -85,7 +85,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="NReflect.NRMembers.NRReturnValueOperation">
-    <Position X="5.5" Y="6.25" Width="1.5" />
+    <Position X="5.25" Y="6.25" Width="2" />
     <Members>
       <Method Name="NRReturnValueOperation" Hidden="true" />
     </Members>

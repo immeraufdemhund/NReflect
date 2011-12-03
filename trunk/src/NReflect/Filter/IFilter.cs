@@ -117,5 +117,12 @@ namespace NReflect.Filter
     /// <param name="nrAttribute">The attribute to test.</param>
     /// <returns><c>True</c> if the attribute should be reflected.</returns>
     bool Reflect(NRAttribute nrAttribute);
+
+    /// <summary>
+    /// Determines if a module will be reflected.
+    /// </summary>
+    /// <param name="nrModule">The module to test.</param>
+    /// <returns><c>True</c> if the module should be reflected.</returns>
+    bool Reflect(NRModule nrModule);
   }
 }

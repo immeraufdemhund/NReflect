@@ -22,8 +22,9 @@
           <codeEntityReference qualifyHint="true">T:NReflect.IVisitable</codeEntityReference>
           and can be visited by an visitor. Each class of the namespaces
           <codeEntityReference qualifyHint="true">N:NReflect.NREntities</codeEntityReference>,
-          <codeEntityReference qualifyHint="true">N:NReflect.NRMembers</codeEntityReference> and
-          <codeEntityReference qualifyHint="true">N:NReflect.NRParameters</codeEntityReference>
+          <codeEntityReference qualifyHint="true">N:NReflect.NRMembers</codeEntityReference>,
+          <codeEntityReference qualifyHint="true">N:NReflect.NRParameters</codeEntityReference> and
+          <codeEntityReference qualifyHint="true">N:NReflect.NRAttributes</codeEntityReference>
           implement this interface so they are visitable.
         </para>
         <section>
@@ -44,7 +45,12 @@ nrAssembly.Accept(visitor);
     </section>
     <relatedTopics>
       <link xlink:href="8f080f07-d44c-44ac-b883-a0993850d183"/>
-      <link xlink:href="51ae2c74-edd3-44cd-b666-b12639296cfb"/>
+      <link xlink:href="c47434e4-4a2e-40cd-b86c-4378cdcc537c"/>
+      <link xlink:href="7a5a5f55-104d-4753-9a03-a68362a41cb8"/>
+      <link xlink:href="8345ab04-1135-4bba-84a6-6d9c851eb1f6"/>
+      <link xlink:href="00a76374-994c-419f-b0a6-135a3cfa3041"/>
+      <codeEntityReference>T:NReflect.IVisitable</codeEntityReference>
+      <codeEntityReference>T:NReflect.IVisitor</codeEntityReference>
     </relatedTopics>
   </developerConceptualDocument>
 </topic>

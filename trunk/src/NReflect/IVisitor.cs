@@ -123,5 +123,11 @@ namespace NReflect
     /// </summary>
     /// <param name="nrAttribute">The <see cref="NRAttribute"/> to visit.</param>
     void Visit(NRAttribute nrAttribute);
+
+    /// <summary>
+    /// Visit a <see cref="NRModule"/>.
+    /// </summary>
+    /// <param name="nrModule">The <see cref="NRModule"/> to visit.</param>
+    void Visit(NRModule nrModule);
   }
 }

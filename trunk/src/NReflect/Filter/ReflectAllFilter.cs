@@ -164,6 +164,16 @@ namespace NReflect.Filter
       return true;
     }
 
+    /// <summary>
+    /// Determines if a module will be reflected.
+    /// </summary>
+    /// <param name="nrModule">The module to test.</param>
+    /// <returns><c>True</c> if the module should be reflected.</returns>
+    public bool Reflect(NRModule nrModule)
+    {
+      return true;
+    }
+
     #endregion
   }
 }

@@ -59,11 +59,6 @@ namespace NReflect
     #region === Fields
 
     /// <summary>
-    /// The reflected assembly.
-    /// </summary>
-    private NRAssembly nrAssembly;
-
-    /// <summary>
     /// The path of the assembly to import.
     /// </summary>
     private string path;
@@ -152,7 +147,7 @@ namespace NReflect
     /// <returns>The result of the reflection.</returns>
     public NRAssembly Reflect(string fileName)
     {
-      nrAssembly = new NRAssembly();
+      NRAssembly nrAssembly = new NRAssembly();
       path = Path.GetDirectoryName(fileName);
 
       AppDomain.CurrentDomain.ReflectionOnlyAssemblyResolve += CurrentDomain_ReflectionOnlyAssemblyResolve;
@@ -161,9 +156,43 @@ namespace NReflect
       nrAssembly.Source = fileName;
 
       ReflectAttributes(CustomAttributeData.GetCustomAttributes(assembly), nrAssembly);
-      ReflectTypes(assembly.GetTypes());
+      ReflectTypes(assembly.GetTypes(), nrAssembly);
+      ReflectModules(assembly.GetModules(), nrAssembly);
 
       return nrAssembly;
+    }
+
+    /// <summary>
+    /// Reflect every given module.
+    /// </summary>
+    /// <param name="modules">The modules to reflect.</param>
+    /// <param name="nrAssembly">This assembly will get the reflection result.</param>
+    private void ReflectModules(IEnumerable<Module> modules, NRAssembly nrAssembly)
+    {
+      foreach(Module module in modules)
+      {
+        NRModule nrModule = new NRModule
+                              {
+                                Name = module.Name
+                              };
+
+        ReflectAttributes(CustomAttributeData.GetCustomAttributes(module), nrModule);
+        ReflectTypes(module.GetTypes(), nrModule);
+        foreach(FieldInfo fieldInfo in module.GetFields())
+        {
+          ReflectField(fieldInfo, nrModule);
+        }
+        foreach(MethodInfo methodInfo in module.GetMethods())
+        {
+          ReflectMethod(methodInfo, nrModule);
+        }
+
+        // Ask the filter if the module should be present in the result.
+        if(Filter.Reflect(nrModule))
+        {
+          nrAssembly.Modules.Add(nrModule);
+        }
+      }
     }
 
     /// <summary>
@@ -213,7 +242,8 @@ namespace NReflect
     /// Reflect all given types and create NReflect-entities.
     /// </summary>
     /// <param name="types">An array of types to reflect.</param>
-    private void ReflectTypes(IEnumerable<Type> types)
+    /// <param name="entityContainer">An instance of <see cref="IEntityContainer"/> to add the types to.</param>
+    private void ReflectTypes(IEnumerable<Type> types, IEntityContainer entityContainer)
     {
       foreach(Type type in types)
       {
@@ -225,7 +255,7 @@ namespace NReflect
         {
           continue;
         }
-        ReflectType(type);
+        ReflectType(type, entityContainer);
       }
     }
 
@@ -233,11 +263,12 @@ namespace NReflect
     /// Reflect a given type and create the corresponding NReflect entity.
     /// </summary>
     /// <param name="type">The type to reflect.</param>
-    private void ReflectType(Type type)
+    /// <param name="entityContainer">An instance of <see cref="IEntityContainer"/> to add the type to.</param>
+    private void ReflectType(Type type, IEntityContainer entityContainer)
     {
-      if(type == null || entities.ContainsKey(type))
+      if(type == null)
       {
-        // Type is already reflected - don't do it again.
+        // Type is null - nothing to do.
         return;
       }
 
@@ -246,24 +277,24 @@ namespace NReflect
         //Could be a delegate
         if(type.BaseType == typeof(MulticastDelegate))
         {
-          ReflectDelegate(type);
+          ReflectDelegate(type, entityContainer);
         }
         else
         {
-          ReflectClass(type);
+          ReflectClass(type, entityContainer);
         }
       }
       if(type.IsInterface)
       {
-        ReflectInterface(type);
+        ReflectInterface(type, entityContainer);
       }
       if(type.IsEnum)
       {
-        ReflectEnum(type);
+        ReflectEnum(type, entityContainer);
       }
       if(type.IsValueType && !type.IsEnum)
       {
-        ReflectStruct(type);
+        ReflectStruct(type, entityContainer);
       }
     }
 
@@ -271,82 +302,48 @@ namespace NReflect
     /// Reflects the class <paramref name="type"/>.
     /// </summary>
     /// <param name="type">A type with informations about the class which gets reflected.</param>
-    private void ReflectClass(Type type)
+    /// <param name="entityContainer">An instance of <see cref="IEntityContainer"/> to add the class to.</param>
+    private void ReflectClass(Type type, IEntityContainer entityContainer)
     {
-      NRClass nrClass = new NRClass();
-
-      ReflectEvents(type, nrClass);
-      ReflectFields(type, nrClass);
-      ReflectProperties(type, nrClass);
-      ReflectConstructors(type, nrClass);
-      ReflectMethods(type, nrClass);
-
-      ReflectSingleInheritanceType(type, nrClass);
-      ReflectGenericType(type, nrClass);
-      ReflectTypeBase(type, nrClass);
-
-      if(type.IsAbstract && type.IsSealed)
+      NRClass nrClass;
+      if (entities.ContainsKey(type))
       {
-        nrClass.ClassModifier = ClassModifier.Static;
+        //Class is already reflected - use the old one.
+        nrClass = (NRClass)entities[type];
       }
-      else if(type.IsAbstract)
+      else
       {
-        nrClass.ClassModifier = ClassModifier.Abstract;
-      }
-      else if(type.IsSealed)
-      {
-        nrClass.ClassModifier = ClassModifier.Sealed;
+        nrClass = new NRClass();
+
+        ReflectEvents(type, nrClass);
+        ReflectFields(type, nrClass);
+        ReflectProperties(type, nrClass);
+        ReflectConstructors(type, nrClass);
+        ReflectMethods(type, nrClass);
+
+        ReflectSingleInheritanceType(type, nrClass);
+        ReflectCompositeType(type, nrClass);
+        ReflectGenericType(type, nrClass);
+        ReflectTypeBase(type, nrClass);
+
+        if(type.IsAbstract && type.IsSealed)
+        {
+          nrClass.ClassModifier = ClassModifier.Static;
+        }
+        else if(type.IsAbstract)
+        {
+          nrClass.ClassModifier = ClassModifier.Abstract;
+        }
+        else if(type.IsSealed)
+        {
+          nrClass.ClassModifier = ClassModifier.Sealed;
+        }
       }
 
       //Ask the filter if the class should be in the result.
       if(Filter.Reflect(nrClass))
       {
-        nrAssembly.Classes.Add(nrClass);
-      }
-    }
-
-    /// <summary>
-    /// Reflects the delegate <paramref name="type"/>.
-    /// </summary>
-    /// <param name="type">A type with informations about the delegate which gets reflected.</param>
-    private void ReflectDelegate(Type type)
-    {
-      MethodInfo methodInfo = type.GetMethod("Invoke");
-
-      NRDelegate nrDelegate = new NRDelegate
-                                {
-                                  ReturnType = GetType(methodInfo.ReturnType, methodInfo)
-                                };
-      ReflectParameters(methodInfo, nrDelegate.Parameters);
-
-      ReflectGenericType(type, nrDelegate);
-      ReflectTypeBase(type, nrDelegate);
-
-      //Ask the filter if the delegate should be in the result.
-      if(Filter.Reflect(nrDelegate))
-      {
-        nrAssembly.Delegates.Add(nrDelegate);
-      }
-    }
-
-    /// <summary>
-    /// Reflects the interface <paramref name="type"/>.
-    /// </summary>
-    /// <param name="type">A type with informations about the interface which gets reflected.</param>
-    private void ReflectInterface(Type type)
-    {
-      NRInterface nrInterface = new NRInterface();
-      ReflectEvents(type, nrInterface);
-      ReflectProperties(type, nrInterface);
-      ReflectMethods(type, nrInterface);
-
-      ReflectGenericType(type, nrInterface);
-      ReflectTypeBase(type, nrInterface);
-
-      //Ask the filter if the interface should be int the result.
-      if(Filter.Reflect(nrInterface))
-      {
-        nrAssembly.Interfaces.Add(nrInterface);
+        entityContainer.Classes.Add(nrClass);
       }
     }
 
@@ -354,23 +351,100 @@ namespace NReflect
     /// Reflects the struct <paramref name="type"/>.
     /// </summary>
     /// <param name="type">A type with informations about the struct which gets reflected.</param>
-    private void ReflectStruct(Type type)
+    /// <param name="entityContainer">An instance of <see cref="IEntityContainer"/> to add the struct to.</param>
+    private void ReflectStruct(Type type, IEntityContainer entityContainer)
     {
-      NRStruct nrStruct = new NRStruct();
-      ReflectEvents(type, nrStruct);
-      ReflectFields(type, nrStruct);
-      ReflectProperties(type, nrStruct);
-      ReflectConstructors(type, nrStruct);
-      ReflectMethods(type, nrStruct);
+      NRStruct nrStruct;
+      if (entities.ContainsKey(type))
+      {
+        //Struct is already reflected - use the old one.
+        nrStruct = (NRStruct)entities[type];
+      }
+      else
+      {
+        nrStruct = new NRStruct();
+        ReflectEvents(type, nrStruct);
+        ReflectFields(type, nrStruct);
+        ReflectProperties(type, nrStruct);
+        ReflectConstructors(type, nrStruct);
+        ReflectMethods(type, nrStruct);
 
-      ReflectSingleInheritanceType(type, nrStruct);
-      ReflectGenericType(type, nrStruct);
-      ReflectTypeBase(type, nrStruct);
+        ReflectSingleInheritanceType(type, nrStruct);
+        ReflectCompositeType(type, nrStruct);
+        ReflectGenericType(type, nrStruct);
+        ReflectTypeBase(type, nrStruct);
+      }
 
       //Ask the filter if the struct should be in the result.
       if(Filter.Reflect(nrStruct))
       {
-        nrAssembly.Structs.Add(nrStruct);
+        entityContainer.Structs.Add(nrStruct);
+      }
+    }
+
+    /// <summary>
+    /// Reflects the interface <paramref name="type"/>.
+    /// </summary>
+    /// <param name="type">A type with informations about the interface which gets reflected.</param>
+    /// <param name="entityContainer">An instance of <see cref="IEntityContainer"/> to add the interface to.</param>
+    private void ReflectInterface(Type type, IEntityContainer entityContainer)
+    {
+      NRInterface nrInterface;
+      if (entities.ContainsKey(type))
+      {
+        //Interface is already reflected - use the old one.
+        nrInterface = (NRInterface)entities[type];
+      }
+      else
+      {
+        nrInterface = new NRInterface();
+        ReflectEvents(type, nrInterface);
+        ReflectProperties(type, nrInterface);
+        ReflectMethods(type, nrInterface);
+
+        ReflectCompositeType(type, nrInterface);
+        ReflectGenericType(type, nrInterface);
+        ReflectTypeBase(type, nrInterface);
+      }
+
+      //Ask the filter if the interface should be int the result.
+      if(Filter.Reflect(nrInterface))
+      {
+        entityContainer.Interfaces.Add(nrInterface);
+      }
+    }
+
+    /// <summary>
+    /// Reflects the delegate <paramref name="type"/>.
+    /// </summary>
+    /// <param name="type">A type with informations about the delegate which gets reflected.</param>
+    /// <param name="entityContainer">An instance of <see cref="IEntityContainer"/> to add the delgate to.</param>
+    private void ReflectDelegate(Type type, IEntityContainer entityContainer)
+    {
+      NRDelegate nrDelegate;
+      if (entities.ContainsKey(type))
+      {
+        //Delegate is already reflected - use the old one.
+        nrDelegate = (NRDelegate)entities[type];
+      }
+      else
+      {
+        MethodInfo methodInfo = type.GetMethod("Invoke");
+
+        nrDelegate = new NRDelegate
+                       {
+                         ReturnType = GetType(methodInfo.ReturnType, methodInfo)
+                       };
+        ReflectParameters(methodInfo, nrDelegate.Parameters);
+
+        ReflectGenericType(type, nrDelegate);
+        ReflectTypeBase(type, nrDelegate);
+      }
+
+      //Ask the filter if the delegate should be in the result.
+      if(Filter.Reflect(nrDelegate))
+      {
+        entityContainer.Delegates.Add(nrDelegate);
       }
     }
 
@@ -378,39 +452,50 @@ namespace NReflect
     /// Reflects the enum <paramref name="type"/>.
     /// </summary>
     /// <param name="type">A type with informations about the enum which gets reflected.</param>
-    private void ReflectEnum(Type type)
+    /// <param name="entityContainer">An instance of <see cref="IEntityContainer"/> to add the enum to.</param>
+    private void ReflectEnum(Type type, IEntityContainer entityContainer)
     {
-      NREnum nrEnum = new NREnum();
-      FieldInfo[] fields = type.GetFields(STANDARD_BINDING_FLAGS);
-      foreach(FieldInfo field in fields)
+      NREnum nrEnum;
+      if (entities.ContainsKey(type))
       {
-        //Sort this special field out
-        if(field.Name == "value__")
-        {
-          continue;
-        }
-        NREnumValue nrEnumValue = new NREnumValue
-                                    {
-                                      Name = field.Name
-                                    };
-        object rawConstantValue = field.GetRawConstantValue();
-        if(rawConstantValue != null)
-        {
-          nrEnumValue.Value = rawConstantValue.ToString();
-        }
-
-        // Ask the filter if the field should be reflected
-        if(Filter.Reflect(nrEnumValue))
-        {
-          nrEnum.Values.Add(nrEnumValue);
-        }
+        //Enum is already reflected - use the old one.
+        nrEnum = (NREnum)entities[type];
       }
-      ReflectTypeBase(type, nrEnum);
+      else
+      {
+        nrEnum = new NREnum();
+        FieldInfo[] fields = type.GetFields(STANDARD_BINDING_FLAGS);
+        foreach(FieldInfo field in fields)
+        {
+          //Sort this special field out
+          if(field.Name == "value__")
+          {
+            continue;
+          }
+          NREnumValue nrEnumValue = new NREnumValue
+                                      {
+                                        Name = field.Name
+                                      };
+          object rawConstantValue = field.GetRawConstantValue();
+          if(rawConstantValue != null)
+          {
+            nrEnumValue.Value = rawConstantValue.ToString();
+          }
+          ReflectAttributes(CustomAttributeData.GetCustomAttributes(field), nrEnumValue);
+
+          // Ask the filter if the field should be reflected
+          if(Filter.Reflect(nrEnumValue))
+          {
+            nrEnum.Values.Add(nrEnumValue);
+          }
+        }
+        ReflectTypeBase(type, nrEnum);
+      }
 
       //Ask the filter if the enum should be in the result.
       if(Filter.Reflect(nrEnum))
       {
-        nrAssembly.Enums.Add(nrEnum);
+        entityContainer.Enums.Add(nrEnum);
       }
     }
 
@@ -418,16 +503,25 @@ namespace NReflect
     /// Reflect the information of a single inheritance type like a class or a struct.
     /// </summary>
     /// <param name="type">The information is taken from <paramref name="type"/>.</param>
-    /// <param name="nrSingleInheritanceType">All information is stored in this TypeBase.</param>
+    /// <param name="nrSingleInheritanceType">All information is stored in this object.</param>
     private void ReflectSingleInheritanceType(Type type, NRSingleInheritanceType nrSingleInheritanceType)
     {
       if(type.BaseType != null)
       {
         nrSingleInheritanceType.BaseType = type.BaseType.FullName;
       }
-      foreach(Type implementedInterface in type.GetInterfaces())
+    }
+
+    /// <summary>
+    /// Reflect the information of a composite type like a class, a struct or an interface.
+    /// </summary>
+    /// <param name="type">The information is taken from <paramref name="type"/>.</param>
+    /// <param name="nrCompositeType">All information is stored in this object.</param>
+    private void ReflectCompositeType(Type type, NRCompositeType nrCompositeType)
+    {
+      foreach (Type implementedInterface in type.GetInterfaces())
       {
-        nrSingleInheritanceType.ImplementedInterfaces.Add(implementedInterface.FullName ?? implementedInterface.Name);
+        nrCompositeType.ImplementedInterfaces.Add(implementedInterface.FullName ?? implementedInterface.Name);
       }
     }
 
@@ -476,7 +570,7 @@ namespace NReflect
 
     #endregion
 
-    #region +++ Reflect members
+    #region +++ Reflect members of types
 
     /// <summary>
     /// Reflects all events within the type <paramref name="type"/>. Reflected
@@ -521,11 +615,11 @@ namespace NReflect
 
     /// <summary>
     /// Reflects all fields within the type <paramref name="type"/>. Reflected
-    /// fields are added to <paramref name="nrSingleInheritanceType"/>.
+    /// fields are added to <paramref name="fieldContainer"/>.
     /// </summary>
     /// <param name="type">The fields are taken from this type.</param>
-    /// <param name="nrSingleInheritanceType">Reflected fields are added to this FieldContainer.</param>
-    private void ReflectFields(Type type, NRSingleInheritanceType nrSingleInheritanceType)
+    /// <param name="fieldContainer">Reflected fields are added to this FieldContainer.</param>
+    private void ReflectFields(Type type, IFieldContainer fieldContainer)
     {
       List<string> events = GetEventNames(type);
 
@@ -548,44 +642,7 @@ namespace NReflect
           continue;
         }
 
-        NRField nrField = new NRField
-                            {
-                              Name = fieldInfo.Name,
-                              AccessModifier = GetFieldAccessModifier(fieldInfo),
-                              IsReadonly = fieldInfo.IsInitOnly,
-                              IsStatic = fieldInfo.IsStatic,
-                              Type = GetType(fieldInfo.FieldType, fieldInfo),
-                              TypeFullName = fieldInfo.FieldType.FullName ?? fieldInfo.FieldType.Name
-                            };
-        ReflectAttributes(CustomAttributeData.GetCustomAttributes(fieldInfo), nrField);
-
-        Type[] customModifiers = fieldInfo.GetRequiredCustomModifiers();
-        if(customModifiers.Contains(typeof(IsVolatile)))
-        {
-          nrField.IsVolatile = true;
-        }
-
-        if(IsFieldOverwritten(type.BaseType, fieldInfo))
-        {
-          nrField.IsHider = true;
-        }
-
-        if(fieldInfo.IsLiteral)
-        {
-          object rawConstantValue = fieldInfo.GetRawConstantValue();
-          if(rawConstantValue != null)
-          {
-            nrField.InitialValue = rawConstantValue.ToString();
-          }
-          nrField.IsStatic = false;
-          nrField.IsConstant = true;
-        }
-
-        //Ask the filter if the field should be in the result.
-        if(Filter.Reflect(nrField))
-        {
-          nrSingleInheritanceType.Fields.Add(nrField);
-        }
+        ReflectField(fieldInfo, fieldContainer);
       }
     }
 
@@ -644,9 +701,6 @@ namespace NReflect
           continue;
         }
 
-        //We store the method name here so it is much easier to take care about operators
-        string methodName = methodInfo.Name;
-        bool isOperator = false;
         if(methodInfo.IsSpecialName)
         {
           //SpecialName means that this method is an automaticaly generated
@@ -658,66 +712,15 @@ namespace NReflect
             continue;
           }
           //!method.Name starts with 'op_' and so it is an operator.
-          isOperator = true;
-          //We have to get the 'real' method name here.
-          if(operatorMethodsMap.ContainsKey(methodName))
+
+          if(nrCompositeType is NRSingleInheritanceType)
           {
-            methodName = operatorMethodsMap[methodName];
-          }
-
-          if(methodName == "op_Implicit")
-          {
-            methodName = "implicit operator " + GetTypeName(methodInfo.ReturnType);
-          }
-          else if(methodName == "op_Explicit")
-          {
-            methodName = "explicit operator " + GetTypeName(methodInfo.ReturnType);
-          }
-        }
-
-        NRReturnValueOperation nrOperation;
-        if(isOperator)
-        {
-          nrOperation = new NROperator();
-        }
-        else
-        {
-          nrOperation = new NRMethod();
-        }
-        nrOperation.Name = methodName;
-        nrOperation.Type = GetType(methodInfo.ReturnType, methodInfo);
-        nrOperation.TypeFullName = methodInfo.ReturnType.FullName ?? methodInfo.ReturnType.Name;
-
-        if(!(nrCompositeType is NRInterface))
-        {
-          nrOperation.AccessModifier = GetMethodAccessModifier(methodInfo);
-          nrOperation.OperationModifier = GetOperationModifier(methodInfo);
-        }
-
-        ChangeOperationModifierIfOverwritten(type, methodInfo, nrOperation);
-
-        ReflectParameters(methodInfo, nrOperation.Parameters);
-        ReflectAttributes(CustomAttributeData.GetCustomAttributes(methodInfo), nrOperation);
-        nrOperation.ReturnValueAttributes.AddRange(GetAttributes(CustomAttributeData.GetCustomAttributes(methodInfo)));
-
-        if(isOperator)
-        {
-          //Ask the filter if the method should be in the result.
-          if(Filter.Reflect((NROperator)nrOperation) && nrCompositeType is NRSingleInheritanceType)
-          {
-            ((NRSingleInheritanceType)nrCompositeType).Operators.Add((NROperator)nrOperation);
+            ReflectOperator(methodInfo, (NRSingleInheritanceType)nrCompositeType);
           }
         }
         else
         {
-          NRMethod nrMethod = (NRMethod)nrOperation;
-          nrMethod.IsExtensionMethod = HasMemberAttribute(methodInfo, typeof(ExtensionAttribute));
-          nrMethod.GenericTypes.AddRange(GetTypeParameters(methodInfo.GetGenericArguments()));
-          //Ask the filter if the method should be in the result.
-          if(Filter.Reflect(nrMethod))
-          {
-            nrCompositeType.Methods.Add(nrMethod);
-          }
+          ReflectMethod(methodInfo, nrCompositeType);
         }
       }
     }
@@ -853,6 +856,143 @@ namespace NReflect
     private void ReflectAttributes(IEnumerable<CustomAttributeData> attributeDatas, IAttributable attributable)
     {
       attributable.Attributes.AddRange(GetAttributes(attributeDatas));
+    }
+
+    #endregion
+
+    #region +++ Reflect members
+
+    /// <summary>
+    /// Reflects the given field. The result is added to <paramref name="fieldContainer"/>.
+    /// </summary>
+    /// <param name="fieldInfo">The field to reflect.</param>
+    /// <param name="fieldContainer">The reflected field is added to this <see cref="IFieldContainer"/>.</param>
+    private void ReflectField(FieldInfo fieldInfo, IFieldContainer fieldContainer)
+    {
+      NRField nrField = new NRField
+                          {
+                            Name = fieldInfo.Name,
+                            AccessModifier = GetFieldAccessModifier(fieldInfo),
+                            IsReadonly = fieldInfo.IsInitOnly,
+                            IsStatic = fieldInfo.IsStatic,
+                            Type = GetType(fieldInfo.FieldType, fieldInfo),
+                            TypeFullName = fieldInfo.FieldType.FullName ?? fieldInfo.FieldType.Name
+                          };
+      ReflectAttributes(CustomAttributeData.GetCustomAttributes(fieldInfo), nrField);
+
+      Type[] customModifiers = fieldInfo.GetRequiredCustomModifiers();
+      if(customModifiers.Contains(typeof(IsVolatile)))
+      {
+        nrField.IsVolatile = true;
+      }
+
+      if (fieldInfo.DeclaringType != null && IsFieldOverwritten(fieldInfo.DeclaringType.BaseType, fieldInfo))
+      {
+        nrField.IsHider = true;
+      }
+
+      if(fieldInfo.IsLiteral)
+      {
+        object rawConstantValue = fieldInfo.GetRawConstantValue();
+        if(rawConstantValue != null)
+        {
+          nrField.InitialValue = rawConstantValue.ToString();
+        }
+        nrField.IsStatic = false;
+        nrField.IsConstant = true;
+      }
+
+      //Ask the filter if the field should be in the result.
+      if(Filter.Reflect(nrField))
+      {
+        fieldContainer.Fields.Add(nrField);
+      }
+    }
+
+    /// <summary>
+    /// Reflects a single method.
+    /// </summary>
+    /// <param name="methodInfo">The method to reflect.</param>
+    /// <param name="methodContainer">The reflected method will be added to this <see cref="IMethodContainer"/>.</param>
+    private void ReflectMethod(MethodInfo methodInfo, IMethodContainer methodContainer)
+    {
+      NRMethod nrMethod = new NRMethod
+                            {
+                              Name = methodInfo.Name
+                            };
+
+      ReflectReturnValueOperation(methodInfo, nrMethod, methodContainer);
+
+      nrMethod.IsExtensionMethod = HasMemberAttribute(methodInfo, typeof(ExtensionAttribute));
+      nrMethod.GenericTypes.AddRange(GetTypeParameters(methodInfo.GetGenericArguments()));
+
+      //Ask the filter if the method should be in the result.
+      if (Filter.Reflect(nrMethod))
+      {
+        methodContainer.Methods.Add(nrMethod);
+      }
+    }
+
+    /// <summary>
+    /// Reflects a single operator.
+    /// </summary>
+    /// <param name="methodInfo">The operator to reflect.</param>
+    /// <param name="singleInheritanceType">The reflected operator will be added to this <see cref="NRSingleInheritanceType"/>.</param>
+    private void ReflectOperator(MethodInfo methodInfo, NRSingleInheritanceType singleInheritanceType)
+    {
+      NROperator nrOperator = new NROperator();
+
+      //We store the method name here so it is much easier to take care about operators
+      string methodName = methodInfo.Name;
+      //We have to get the 'real' method name here.
+      if (operatorMethodsMap.ContainsKey(methodName))
+      {
+        methodName = operatorMethodsMap[methodName];
+      }
+
+      if (methodName == "op_Implicit")
+      {
+        methodName = "implicit operator " + GetTypeName(methodInfo.ReturnType);
+      }
+      else if (methodName == "op_Explicit")
+      {
+        methodName = "explicit operator " + GetTypeName(methodInfo.ReturnType);
+      }
+
+      nrOperator.Name = methodName;
+
+      ReflectReturnValueOperation(methodInfo, nrOperator, singleInheritanceType);
+
+      //Ask the filter if the method should be in the result.
+      if (Filter.Reflect(nrOperator))
+      {
+        singleInheritanceType.Operators.Add(nrOperator);
+      }
+    }
+
+    /// <summary>
+    /// Reflects the information of a <see cref="NRReturnValueOperation"/>.
+    /// </summary>
+    /// <param name="methodInfo">The method to reflect.</param>
+    /// <param name="nrOperation">The reflected information will be added to this <see cref="NRReturnValueOperation"/>.</param>
+    /// <param name="methodContainer">This will be used to determine if the method is part of an
+    ///                               interface or not. Nothing will be added to this container.</param>
+    private void ReflectReturnValueOperation(MethodInfo methodInfo, NRReturnValueOperation nrOperation, IMethodContainer methodContainer)
+    {
+      nrOperation.Type = GetType(methodInfo.ReturnType, methodInfo);
+      nrOperation.TypeFullName = methodInfo.ReturnType.FullName ?? methodInfo.ReturnType.Name;
+
+      ReflectParameters(methodInfo, nrOperation.Parameters);
+      ReflectAttributes(CustomAttributeData.GetCustomAttributes(methodInfo), nrOperation);
+      nrOperation.ReturnValueAttributes.AddRange(GetAttributes(CustomAttributeData.GetCustomAttributes(methodInfo)));
+
+      if (!(methodContainer is NRInterface))
+      {
+        nrOperation.AccessModifier = GetMethodAccessModifier(methodInfo);
+        nrOperation.OperationModifier = GetOperationModifier(methodInfo);
+      }
+
+      ChangeOperationModifierIfOverwritten(methodInfo.DeclaringType, methodInfo, nrOperation);
     }
 
     #endregion
@@ -1228,7 +1368,7 @@ namespace NReflect
     /// <param name="nrOperation">The operation which has to be changed.</param>
     private static void ChangeOperationModifierIfOverwritten(Type type, MethodBase method, NROperation nrOperation)
     {
-      if(IsMethodOverwritten(type.BaseType, method))
+      if(type != null && IsMethodOverwritten(type.BaseType, method))
       {
         if(method.IsVirtual &&
            (method.Attributes & MethodAttributes.VtableLayoutMask) != MethodAttributes.VtableLayoutMask)
@@ -1239,8 +1379,8 @@ namespace NReflect
           }
           nrOperation.IsOverride = true;
         }
-          //It's not possible to distinguish between virtual and virtual new
-          //in the assembly, because virtual methods get implicitly virtual new.
+        //It's not possible to distinguish between virtual and virtual new
+        //in the assembly, because virtual methods get implicitly virtual new.
         else
         {
           nrOperation.IsHider = true;
@@ -1257,7 +1397,7 @@ namespace NReflect
     /// <returns>The OperationModifier of <paramref name="method"/>.</returns>
     private static OperationModifier GetOperationModifier(MethodBase method)
     {
-      if(method.DeclaringType.IsValueType)
+      if (method.DeclaringType != null && method.DeclaringType.IsValueType)
       {
         return OperationModifier.None;
       }

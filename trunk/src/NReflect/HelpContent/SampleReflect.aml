@@ -8,26 +8,19 @@
       <title>Reflect an assembly</title>
       <content>
         <para>
-          Suppose we want to import all public elements of an assembly. How to
-          do that? The following code shows how:
+          The following code shows how to reflect the contents of an assembly and
+          print out the results:
         </para>
       </content>
     </section>
     <codeExample>
       <code language="C#">
-// Create the filter
-IncludeFilter includeFilter = new IncludeFilter();
-includeFilter.Rules.Add(new FilterRule(FilterModifiers.Public, FilterElements.AllElements));
-
-StatisticFilter statisticFilter = new StatisticFilter(includeFilter);
-
 // Do the reflection
 NRAssembly nrAssembly;
-IFilter filter = statisticFilter;
 try
 {
   Reflector reflector = new Reflector();
-  nrAssembly = reflector.Reflect("MyAssembly.dll", ref filter);
+  nrAssembly = reflector.Reflect("MyAssembly.dll");
 }
 catch(Exception ex)
 {
@@ -55,8 +48,8 @@ NRRelationships nrRelationships = relationshipCreator.CreateRelationships(nrAsse
       </alert>
     </codeExample>
     <relatedTopics>
+      <link xlink:href="ffe32e8d-3d36-4dba-8dfb-feca3c18011b"/>
       <link xlink:href="8f080f07-d44c-44ac-b883-a0993850d183" />
-      <link xlink:href="51ae2c74-edd3-44cd-b666-b12639296cfb" />
       <link xlink:href="5ebdd67b-0f04-4e7d-a71f-a225a10f7ca4" />
       <codeEntityReference>N:NReflect</codeEntityReference>
     </relatedTopics>

@@ -26,7 +26,7 @@ namespace NReflect.NREntities
   /// Represents a type which can contain fields and methods which is reflected by NReflect.
   /// </summary>
   [Serializable]
-  public abstract class NRCompositeType : NRGenericType
+  public abstract class NRCompositeType : NRGenericType, IMethodContainer
   {
     // ========================================================================
     // Con- / Destruction
@@ -38,6 +38,7 @@ namespace NReflect.NREntities
     /// </summary>
     protected NRCompositeType()
     {
+      ImplementedInterfaces = new List<string>();
       Properties = new List<NRProperty>();
       Events = new List<NREvent>();
       Methods = new List<NRMethod>();
@@ -49,6 +50,11 @@ namespace NReflect.NREntities
     // Properties
 
     #region === Properties
+
+    /// <summary>
+    /// Gets a list which contains the full names of all implemented interfaces.
+    /// </summary>
+    public List<string> ImplementedInterfaces { get; private set; }
 
     /// <summary>
     /// Gets a list of properties of this type.

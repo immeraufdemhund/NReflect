@@ -1,4 +1,4 @@
-// NReflect - Easy assembly reflection
+﻿// NReflect - Easy assembly reflection
 // Copyright (C) 2010-2011 Malte Ried
 //
 // This file is part of NReflect.
@@ -19,14 +19,16 @@
 using System;
 using System.Collections.Generic;
 using NReflect.NRAttributes;
+using NReflect.NREntities;
+using NReflect.NRMembers;
 
-namespace NReflect.NRMembers
+namespace NReflect
 {
   /// <summary>
-  /// Represents an enum value which is reflected by NReflect.
+  /// Contains the reflection results of a module.
   /// </summary>
   [Serializable]
-  public class NREnumValue : IVisitable, IAttributable
+  public class NRModule : IVisitable, IEntityContainer, IAttributable, IFieldContainer, IMethodContainer
   {
     // ========================================================================
     // Con- / Destruction
@@ -34,11 +36,18 @@ namespace NReflect.NRMembers
     #region === Con- / Destruction
 
     /// <summary>
-    /// Initializes a new instance of <see cref="NREnumValue"/>.
+    /// Initializes a new instance of <see cref="NRModule"/>.
     /// </summary>
-    public NREnumValue()
+    public NRModule()
     {
       Attributes = new List<NRAttribute>();
+      Classes = new List<NRClass>();
+      Interfaces = new List<NRInterface>();
+      Structs = new List<NRStruct>();
+      Delegates = new List<NRDelegate>();
+      Enums = new List<NREnum>();
+      Fields = new List<NRField>();
+      Methods = new List<NRMethod>();
     }
 
     #endregion
@@ -49,19 +58,49 @@ namespace NReflect.NRMembers
     #region === Properties
 
     /// <summary>
-    /// Gets or sets the name of the enum value.
+    /// Gets or sets the name of the module.
     /// </summary>
     public string Name { get; set; }
-
-    /// <summary>
-    /// Gets or sets the value of the enum value.
-    /// </summary>
-    public string Value { get; set; }
 
     /// <summary>
     /// Gets a list of attributes.
     /// </summary>
     public List<NRAttribute> Attributes { get; private set; }
+
+    /// <summary>
+    /// Gets a list of reflected classes.
+    /// </summary>
+    public List<NRClass> Classes { get; private set; }
+
+    /// <summary>
+    /// Gets a list of reflected interfaces.
+    /// </summary>
+    public List<NRInterface> Interfaces { get; private set; }
+
+    /// <summary>
+    /// Gets a list of reflected structs.
+    /// </summary>
+    public List<NRStruct> Structs { get; private set; }
+
+    /// <summary>
+    /// Gets a list of reflected enums.
+    /// </summary>
+    public List<NREnum> Enums { get; private set; }
+
+    /// <summary>
+    /// Gets a list of reflected delegates.
+    /// </summary>
+    public List<NRDelegate> Delegates { get; private set; }
+
+    /// <summary>
+    /// Gets a list of fields of this type.
+    /// </summary>
+    public List<NRField> Fields { get; private set; }
+
+    /// <summary>
+    /// Gets a list of methods of this type.
+    /// </summary>
+    public List<NRMethod> Methods { get; private set; }
 
     #endregion
 

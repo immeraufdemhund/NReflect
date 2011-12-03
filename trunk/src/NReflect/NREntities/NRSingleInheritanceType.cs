@@ -26,7 +26,7 @@ namespace NReflect.NREntities
   /// Represents a type which can only have one parent type which is reflected by NReflect.
   /// </summary>
   [Serializable]
-  public abstract class NRSingleInheritanceType : NRCompositeType
+  public abstract class NRSingleInheritanceType : NRCompositeType, IFieldContainer
   {
     // ========================================================================
     // Con- / Destruction
@@ -42,7 +42,6 @@ namespace NReflect.NREntities
       NestedTypes = new List<NRTypeBase>();
       Constructors = new List<NRConstructor>();
       Operators = new List<NROperator>();
-      ImplementedInterfaces = new List<string>();
     }
 
     #endregion
@@ -56,11 +55,6 @@ namespace NReflect.NREntities
     /// Gets or sets the full name of the base type of this type.
     /// </summary>
     public string BaseType { get; set; }
-
-    /// <summary>
-    /// Gets a list which contains the full names of all implemented interfaces.
-    /// </summary>
-    public List<string> ImplementedInterfaces { get; private set; }
 
     /// <summary>
     /// Gets a list of nested types.

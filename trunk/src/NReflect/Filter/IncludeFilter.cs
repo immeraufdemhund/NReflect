@@ -205,6 +205,19 @@ namespace NReflect.Filter
     }
 
     /// <summary>
+    /// Determines if a module will be reflected.
+    /// </summary>
+    /// <param name="nrModule">The module to test.</param>
+    /// <returns><c>True</c> if the module should be reflected.</returns>
+    public bool Reflect(NRModule nrModule)
+    {
+      return
+        Rules.Any(
+                  filterRule =>
+                  filterRule.Element == FilterElements.AllElements | filterRule.Element == FilterElements.Module);
+    }
+
+    /// <summary>
     /// Checks if there is a matching rule for the specified type.
     /// </summary>
     /// <param name="nrElement">The type of the element to check.</param>

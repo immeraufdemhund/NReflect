@@ -28,5 +28,26 @@
       <FileName>IVisitor.cs</FileName>
     </TypeIdentifier>
   </Interface>
+  <Interface Name="NReflect.IEntityContainer">
+    <Position X="4.25" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAEAAAAAAAAAAAgAAAAAAAAMAAAAAAAEAAA=</HashCode>
+      <FileName>Interfaces\IEntityContainer.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="NReflect.IFieldContainer">
+    <Position X="6" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAA=</HashCode>
+      <FileName>Interfaces\IFieldContainer.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="NReflect.IMethodContainer">
+    <Position X="7.75" Y="1.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEA=</HashCode>
+      <FileName>Interfaces\IMethodContainer.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

@@ -24,10 +24,10 @@ using NReflect.NREntities;
 namespace NReflect
 {
   /// <summary>
-  /// Contains the reflected entities of an assembly.
+  /// Contains the reflection results of an assembly.
   /// </summary>
   [Serializable]
-  public class NRAssembly : IVisitable, IAttributable
+  public class NRAssembly : IVisitable, IAttributable, IEntityContainer
   {
     // ========================================================================
     // Con- / Destruction
@@ -45,6 +45,7 @@ namespace NReflect
       Enums = new List<NREnum>();
       Delegates = new List<NRDelegate>();
       Attributes = new List<NRAttribute>();
+      Modules = new List<NRModule>();
     }
 
     #endregion
@@ -63,6 +64,11 @@ namespace NReflect
     /// The source of the assembly. Possibly a file name.
     /// </summary>
     public string Source { get; set; }
+
+    /// <summary>
+    /// Gets a list of reflected modules.
+    /// </summary>
+    public List<NRModule> Modules { get; private set; }
 
     /// <summary>
     /// Gets a list of attributes.

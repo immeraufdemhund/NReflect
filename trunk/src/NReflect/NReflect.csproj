@@ -54,6 +54,7 @@
     <Compile Include="Filter\IFilter.cs" />
     <Compile Include="Filter\IncludeFilter.cs" />
     <Compile Include="Filter\StatisticFilter.cs" />
+    <Compile Include="Interfaces\IEntityContainer.cs" />
     <Compile Include="Interfaces\IAttributable.cs" />
     <Compile Include="Interfaces\IGeneric.cs" />
     <Compile Include="Modifier\AccessModifier.cs" />
@@ -66,6 +67,8 @@
     <Compile Include="NRAttributes\NRAttribute.cs" />
     <Compile Include="NRAttributes\NRAttributeValue.cs" />
     <Compile Include="NRCode\CSharp.cs" />
+    <Compile Include="Interfaces\IMethodContainer.cs" />
+    <Compile Include="Interfaces\IFieldContainer.cs" />
     <Compile Include="NREntities\NRClass.cs" />
     <Compile Include="NREntities\NRCompositeType.cs" />
     <Compile Include="NREntities\NRDelegate.cs" />
@@ -86,6 +89,7 @@
     <Compile Include="NRMembers\NROperator.cs" />
     <Compile Include="NRMembers\NRProperty.cs" />
     <Compile Include="NRMembers\NRReturnValueOperation.cs" />
+    <Compile Include="NRModule.cs" />
     <Compile Include="NRParameters\NRParameter.cs" />
     <Compile Include="NRParameters\NRTypeParameter.cs" />
     <Compile Include="NRRelationships.cs" />

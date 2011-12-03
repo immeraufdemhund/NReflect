@@ -82,6 +82,10 @@ namespace NReflect.Filter
     /// <summary>
     /// Attribute
     /// </summary>
-    Attribute
+    Attribute,
+    /// <summary>
+    /// Module
+    /// </summary>
+    Module
   }
 }
