@@ -55,9 +55,17 @@ namespace NReflectRunner
     /// <summary>
     /// Initializes a new instance of <see cref="PrintVisitor"/>.
     /// </summary>
-    public PrintVisitor()
+    public PrintVisitor() : this(Console.Out)
     {
-      writer = Console.Out;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of <see cref="PrintVisitor"/>.
+    /// </summary>
+    /// <param name="writer">This <see cref="TextWriter"/> will be used for output.</param>
+    public PrintVisitor(TextWriter writer)
+    {
+      this.writer = writer;
       indent = 0;
     }
 
@@ -74,17 +82,14 @@ namespace NReflectRunner
       OutputLine("  Source " + nrAssembly.Source);
       VisitAttributes(nrAssembly);
       OutputLine("");
-      PrintEntities("delegates", nrAssembly.Delegates);
-      PrintEntities("interfaces", nrAssembly.Interfaces);
-      PrintEntities("structs", nrAssembly.Structs);
-      PrintEntities("enums", nrAssembly.Enums);
-      PrintEntities("classes", nrAssembly.Classes);
+      PrintEntities(nrAssembly);
     }
 
     public void Visit(NRClass nrClass)
     {
       VisitAttributes(nrClass);
       Output(ToString(nrClass.AccessModifier) + ToString(nrClass.ClassModifier) + "class " + nrClass.Name + GetGenericDefinition(nrClass));
+      PrintBaseTypeAndInterfaces(nrClass);
       VisitTypeParameters(nrClass);
       OutputLine("");
       OutputLine("{");
@@ -125,6 +130,7 @@ namespace NReflectRunner
     {
       VisitAttributes(nrInterface);
       Output(ToString(nrInterface.AccessModifier) + "interface " + nrInterface.Name + GetGenericDefinition(nrInterface));
+      PrintImplementedInterfaces(nrInterface);
       VisitTypeParameters(nrInterface);
       OutputLine("");
       OutputLine("{");
@@ -159,6 +165,7 @@ namespace NReflectRunner
     {
       VisitAttributes(nrStruct);
       Output(ToString(nrStruct.AccessModifier) + "struct " + nrStruct.Name + GetGenericDefinition(nrStruct));
+      PrintBaseTypeAndInterfaces(nrStruct);
       VisitTypeParameters(nrStruct);
       OutputLine("");
       OutputLine("{");
@@ -327,6 +334,7 @@ namespace NReflectRunner
 
     public void Visit(NREnumValue nrEnumValue)
     {
+      VisitAttributes(nrEnumValue);
       string value = "";
       if(!String.IsNullOrWhiteSpace(nrEnumValue.Value))
       {
@@ -338,6 +346,23 @@ namespace NReflectRunner
     public void Visit(NRAttribute nrAttribute)
     {
       OutputLine(GetAttribute(nrAttribute));
+    }
+
+    public void Visit(NRModule nrModule)
+    {
+      OutputLine("Module: " + nrModule.Name);
+      VisitAttributes(nrModule);
+      PrintEntities(nrModule);
+      OutputLine("The module contains the following fields:");
+      foreach(NRField nrField in nrModule.Fields)
+      {
+        nrField.Accept(this);
+      }
+      OutputLine("The module contains the following methods:");
+      foreach(NRMethod nrMethod in nrModule.Methods)
+      {
+        nrMethod.Accept(this);
+      }
     }
 
     /// <summary>
@@ -377,6 +402,60 @@ namespace NReflectRunner
       {
         OutputLine(GetAttribute(nrAttribute, true));
       }
+    }
+
+    /// <summary>
+    /// Prints the base type and all implemented interfaces of the given <see cref="NRSingleInheritanceType"/>.
+    /// </summary>
+    /// <param name="nrSingleInheritanceType">An <see cref="NRSingleInheritanceType"/> to take the base type and interfaces from.</param>
+    private void PrintBaseTypeAndInterfaces(NRSingleInheritanceType nrSingleInheritanceType)
+    {
+      if(nrSingleInheritanceType.BaseType == null && nrSingleInheritanceType.ImplementedInterfaces.Count == 0)
+      {
+        return;
+      }
+      Output(" : ");
+      if(nrSingleInheritanceType.BaseType != null)
+      {
+        Output(nrSingleInheritanceType.BaseType);
+      }
+      foreach(string implementedInterface in nrSingleInheritanceType.ImplementedInterfaces)
+      {
+        Output(", " + implementedInterface);
+      }
+    }
+
+    /// <summary>
+    /// Prints all implemented interfaces of the given <see cref="NRCompositeType"/>.
+    /// </summary>
+    /// <param name="nrCompositeType">An <see cref="NRCompositeType"/> to take the interfaces from.</param>
+    private void PrintImplementedInterfaces(NRCompositeType nrCompositeType)
+    {
+      if (nrCompositeType.ImplementedInterfaces.Count == 0)
+      {
+        return;
+      }
+      Output(" : ");
+      StringBuilder result = new StringBuilder();
+      foreach (string implementedInterface in nrCompositeType.ImplementedInterfaces)
+      {
+        result.Append(implementedInterface + ", ");
+      }
+      result.Length -= 2;
+      Output(result.ToString());
+    }
+
+    /// <summary>
+    /// Prints all entities of the given <see cref="IEntityContainer"/>.
+    /// </summary>
+    /// <param name="entityContainer">An <see cref="IEntityContainer"/> containing the enities to print.</param>
+    private void PrintEntities(IEntityContainer entityContainer)
+    {
+      PrintEntities("delegates", entityContainer.Delegates);
+      PrintEntities("interfaces", entityContainer.Interfaces);
+      PrintEntities("structs", entityContainer.Structs);
+      PrintEntities("enums", entityContainer.Enums);
+      PrintEntities("classes", entityContainer.Classes);
     }
 
     /// <summary>

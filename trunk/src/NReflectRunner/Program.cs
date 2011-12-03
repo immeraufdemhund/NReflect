@@ -32,18 +32,77 @@ namespace NReflectRunner
   static class Program
   {
     /// <summary>
+    /// Is set to true to display reflected modules.
+    /// </summary>
+    private static bool modules;
+
+    /// <summary>
+    /// Is set to true to display the reflected assembly.
+    /// </summary>
+    private static bool assembly;
+
+    /// <summary>
+    /// Is set to true to display the reflected relations.
+    /// </summary>
+    private static bool relations;
+
+    /// <summary>
+    /// Is set to true to display some statistics.
+    /// </summary>
+    private static bool statistic;
+
+    /// <summary>
     /// The main method of the program.
     /// </summary>
     /// <param name="args">The arguments supplied at the console.</param>
     static void Main(string[] args)
     {
-      if(args.Length != 1)
+      string fileName = null;
+
+      foreach(string s in args)
       {
-        Console.WriteLine("Usage:");
-        Console.WriteLine("  NReflectRunner <Path to assembly>");
+        if(s.StartsWith("-"))
+        {
+          foreach(char c in s.Substring(1))
+          {
+            switch(c)
+            {
+              case 'a':
+                assembly = true;
+                break;
+              case 'm':
+                modules = true;
+                break;
+              case 'r':
+                relations = true;
+                break;
+              case 's':
+                statistic = true;
+                break;
+              default:
+                PrintUsage();
+                return;
+            }
+          }
+        }
+        else
+        {
+          if(fileName != null)
+          {
+            PrintUsage();
+            return;
+          }
+          fileName = s;
+        }
+      }
+
+      if (fileName == null)
+      {
+        PrintUsage();
         return;
       }
-      Console.WriteLine("Will now reflect " + args[0]);
+
+      Console.WriteLine("Will now reflect " + fileName);
 
       // Create the filter
       ReflectAllFilter allFilter = new ReflectAllFilter();
@@ -61,7 +120,7 @@ namespace NReflectRunner
       try
       {
         Reflector reflector = new Reflector();
-        nrAssembly = reflector.Reflect(args[0], ref filter);
+        nrAssembly = reflector.Reflect(fileName, ref filter);
       }
       catch(Exception ex)
       {
@@ -71,55 +130,88 @@ namespace NReflectRunner
 
       // Output of the results
       PrintVisitor printVisitor = new PrintVisitor();
-      nrAssembly.Accept(printVisitor);
-
-      RelationshipCreator relationshipCreator = new RelationshipCreator();
-      NRRelationships nrRelationships = relationshipCreator.CreateRelationships(nrAssembly);
-
-      Console.WriteLine("Nesting relationships:");
-      foreach(NRNesting nrNestingRelationship in nrRelationships.Nestings)
+      if(assembly)
       {
-        Console.WriteLine(nrNestingRelationship);
+        nrAssembly.Accept(printVisitor);
+        Console.WriteLine();
       }
-      Console.WriteLine();
 
-      Console.WriteLine("Generalization relationships:");
-      foreach (NRGeneralization nrGeneralizationRelationship in nrRelationships.Generalizations)
+      if (modules)
       {
-        Console.WriteLine(nrGeneralizationRelationship);
+        foreach (NRModule nrModule in nrAssembly.Modules)
+        {
+          nrModule.Accept(printVisitor);
+        }
+        Console.WriteLine();
       }
-      Console.WriteLine();
 
-      Console.WriteLine("Realization relationships:");
-      foreach (NRRealization nrRealizationRelationship in nrRelationships.Realizations)
+      if (relations)
       {
-        Console.WriteLine(nrRealizationRelationship);
-      }
-      Console.WriteLine();
+        RelationshipCreator relationshipCreator = new RelationshipCreator();
+        NRRelationships nrRelationships = relationshipCreator.CreateRelationships(nrAssembly);
 
-      Console.WriteLine("Association relationships:");
-      foreach (NRAssociation nrAssociationRelationship in nrRelationships.Associations)
+        Console.WriteLine("Nesting relationships:");
+        foreach (NRNesting nrNestingRelationship in nrRelationships.Nestings)
+        {
+          Console.WriteLine(nrNestingRelationship);
+        }
+        Console.WriteLine();
+
+        Console.WriteLine("Generalization relationships:");
+        foreach (NRGeneralization nrGeneralizationRelationship in nrRelationships.Generalizations)
+        {
+          Console.WriteLine(nrGeneralizationRelationship);
+        }
+        Console.WriteLine();
+
+        Console.WriteLine("Realization relationships:");
+        foreach (NRRealization nrRealizationRelationship in nrRelationships.Realizations)
+        {
+          Console.WriteLine(nrRealizationRelationship);
+        }
+        Console.WriteLine();
+
+        Console.WriteLine("Association relationships:");
+        foreach (NRAssociation nrAssociationRelationship in nrRelationships.Associations)
+        {
+          Console.WriteLine(nrAssociationRelationship);
+        }
+        Console.WriteLine();
+      }
+
+      if (statistic)
       {
-        Console.WriteLine(nrAssociationRelationship);
+        statisticFilter = (StatisticFilter)filter;
+        Console.WriteLine();
+        Console.WriteLine("Statistic:");
+        Console.WriteLine("Classes     : {0}/{1}", statisticFilter.ReflectedClasses, statisticFilter.ReflectedClasses + statisticFilter.IgnoredClasses);
+        Console.WriteLine("Interfaces  : {0}/{1}", statisticFilter.ReflectedInterfaces, statisticFilter.ReflectedInterfaces + statisticFilter.IgnoredInterfaces);
+        Console.WriteLine("Structures  : {0}/{1}", statisticFilter.ReflectedStructures, statisticFilter.ReflectedStructures + statisticFilter.IgnoredStructures);
+        Console.WriteLine("Delegates   : {0}/{1}", statisticFilter.ReflectedDelegates, statisticFilter.ReflectedDelegates + statisticFilter.IgnoredDelegates);
+        Console.WriteLine("Enums       : {0}/{1}", statisticFilter.ReflectedEnums, statisticFilter.ReflectedEnums + statisticFilter.IgnoredEnums);
+        Console.WriteLine("EnumValues  : {0}/{1}", statisticFilter.ReflectedEnumValues, statisticFilter.ReflectedEnumValues + statisticFilter.IgnoredEnumValues);
+        Console.WriteLine("Constructors: {0}/{1}", statisticFilter.ReflectedConstructors, statisticFilter.ReflectedConstructors + statisticFilter.IgnoredConstructors);
+        Console.WriteLine("Methods     : {0}/{1}", statisticFilter.ReflectedMethods, statisticFilter.ReflectedMethods + statisticFilter.IgnoredMethods);
+        Console.WriteLine("Fields      : {0}/{1}", statisticFilter.ReflectedFields, statisticFilter.ReflectedFields + statisticFilter.IgnoredFields);
+        Console.WriteLine("Properties  : {0}/{1}", statisticFilter.ReflectedProperties, statisticFilter.ReflectedProperties + statisticFilter.IgnoredProperties);
+        Console.WriteLine("Events      : {0}/{1}", statisticFilter.ReflectedEvents, statisticFilter.ReflectedEvents + statisticFilter.IgnoredEvents);
+        Console.WriteLine("Operators   : {0}/{1}", statisticFilter.ReflectedOperators, statisticFilter.ReflectedOperators + statisticFilter.IgnoredOperators);
+        Console.WriteLine("Attributes  : {0}/{1}", statisticFilter.ReflectedAttributes, statisticFilter.ReflectedAttributes + statisticFilter.IgnoredAttributes);
+        Console.WriteLine("Modules     : {0}/{1}", statisticFilter.ReflectedModules, statisticFilter.ReflectedModules + statisticFilter.IgnoredModules);
       }
-      Console.WriteLine();
+    }
 
-      statisticFilter = (StatisticFilter)filter;
-      Console.WriteLine();
-      Console.WriteLine("Statistic:");
-      Console.WriteLine("Classes     : {0}/{1}", statisticFilter.ReflectedClasses, statisticFilter.ReflectedClasses + statisticFilter.IgnoredClasses);
-      Console.WriteLine("Interfaces  : {0}/{1}", statisticFilter.ReflectedInterfaces, statisticFilter.ReflectedInterfaces + statisticFilter.IgnoredInterfaces);
-      Console.WriteLine("Structures  : {0}/{1}", statisticFilter.ReflectedStructures, statisticFilter.ReflectedStructures + statisticFilter.IgnoredStructures);
-      Console.WriteLine("Delegates   : {0}/{1}", statisticFilter.ReflectedDelegates, statisticFilter.ReflectedDelegates + statisticFilter.IgnoredDelegates);
-      Console.WriteLine("Enums       : {0}/{1}", statisticFilter.ReflectedEnums, statisticFilter.ReflectedEnums + statisticFilter.IgnoredEnums);
-      Console.WriteLine("EnumValues  : {0}/{1}", statisticFilter.ReflectedEnumValues, statisticFilter.ReflectedEnumValues + statisticFilter.IgnoredEnumValues);
-      Console.WriteLine("Constructors: {0}/{1}", statisticFilter.ReflectedConstructors, statisticFilter.ReflectedConstructors + statisticFilter.IgnoredConstructors);
-      Console.WriteLine("Methods     : {0}/{1}", statisticFilter.ReflectedMethods, statisticFilter.ReflectedMethods + statisticFilter.IgnoredMethods);
-      Console.WriteLine("Fields      : {0}/{1}", statisticFilter.ReflectedFields, statisticFilter.ReflectedFields + statisticFilter.IgnoredFields);
-      Console.WriteLine("Properties  : {0}/{1}", statisticFilter.ReflectedProperties, statisticFilter.ReflectedProperties + statisticFilter.IgnoredProperties);
-      Console.WriteLine("Events      : {0}/{1}", statisticFilter.ReflectedEvents, statisticFilter.ReflectedEvents + statisticFilter.IgnoredEvents);
-      Console.WriteLine("Operators   : {0}/{1}", statisticFilter.ReflectedOperators, statisticFilter.ReflectedOperators + statisticFilter.IgnoredOperators);
-      Console.WriteLine("Attributes  : {0}/{1}", statisticFilter.ReflectedAttributes, statisticFilter.ReflectedAttributes + statisticFilter.IgnoredAttributes);
+    /// <summary>
+    /// Prints a usage message to the screen.
+    /// </summary>
+    private static void PrintUsage()
+    {
+      Console.WriteLine("Usage:");
+      Console.WriteLine("  NReflectRunner -amrs <Path to assembly>");
+      Console.WriteLine("  -a display the contents of the assembly");
+      Console.WriteLine("  -m display the contents of the modules of the assembyl");
+      Console.WriteLine("  -r display the relations between the entities");
+      Console.WriteLine("  -s display some statistical information");
     }
   }
 }

@@ -1,9 +1,12 @@
 Version 0.9.3 (03-Dec-2011)
 ---------------------------
+! The interfaces an interface extend were not reflected - fixed
++ Modules of an assembly are now reflected
 + Added the ability to reflect generic methods
 + Added reflection of generic constraints
 + Added reflection of extension methods
 + Added reflection of attributes
++ Improved documentation
 
 Version 0.9.2 (23-Sep-2011)
 ---------------------------
