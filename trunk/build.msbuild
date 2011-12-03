@@ -2,7 +2,7 @@
   <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
   
   <PropertyGroup>
-    <Version>0.9.2</Version>
+    <Version>0.9.3</Version>
 	<ExportDir>export</ExportDir>
 	<BinDir>bin</BinDir>
 	<SrcZip>NReflect_v$(Version)_src.zip</SrcZip>
