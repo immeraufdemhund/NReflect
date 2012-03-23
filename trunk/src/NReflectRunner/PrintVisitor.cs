@@ -34,19 +34,8 @@ namespace NReflectRunner
   /// This class implements the <see cref="IVisitor"/> interface to print
   /// the contents of a <see cref="NRAssembly"/> onto to console.
   /// </summary>
-  public class PrintVisitor : IVisitor
+  public class PrintVisitor : VisitorBase, IVisitor
   {
-    // ========================================================================
-    // Fields
-
-    #region === Fields
-
-    private readonly TextWriter writer;
-
-    private int indent;
-
-    #endregion
-
     // ========================================================================
     // Con- / Destruction
 
@@ -55,7 +44,8 @@ namespace NReflectRunner
     /// <summary>
     /// Initializes a new instance of <see cref="PrintVisitor"/>.
     /// </summary>
-    public PrintVisitor() : this(Console.Out)
+    public PrintVisitor()
+      : base(Console.Out)
     {
     }
 
@@ -64,9 +54,8 @@ namespace NReflectRunner
     /// </summary>
     /// <param name="writer">This <see cref="TextWriter"/> will be used for output.</param>
     public PrintVisitor(TextWriter writer)
+      : base(writer)
     {
-      this.writer = writer;
-      indent = 0;
     }
 
     #endregion
@@ -76,6 +65,10 @@ namespace NReflectRunner
 
     #region === Methods
 
+    /// <summary>
+    /// Visit a <see cref="NRAssembly"/>.
+    /// </summary>
+    /// <param name="nrAssembly">The <see cref="NRAssembly"/> to visit.</param>
     public void Visit(NRAssembly nrAssembly)
     {
       OutputLine("Assembly " + nrAssembly.FullName);
@@ -85,6 +78,10 @@ namespace NReflectRunner
       PrintEntities(nrAssembly);
     }
 
+    /// <summary>
+    /// Visit a <see cref="NRClass"/>.
+    /// </summary>
+    /// <param name="nrClass">The <see cref="NRClass"/> to visit.</param>
     public void Visit(NRClass nrClass)
     {
       VisitAttributes(nrClass);
@@ -126,6 +123,10 @@ namespace NReflectRunner
       OutputLine("}");
     }
 
+    /// <summary>
+    /// Visit a <see cref="NRInterface"/>.
+    /// </summary>
+    /// <param name="nrInterface">The <see cref="NRInterface"/> to visit.</param>
     public void Visit(NRInterface nrInterface)
     {
       VisitAttributes(nrInterface);
@@ -151,6 +152,10 @@ namespace NReflectRunner
       OutputLine("}");
     }
 
+    /// <summary>
+    /// Visit a <see cref="NRDelegate"/>.
+    /// </summary>
+    /// <param name="nrDelegate">The <see cref="NRDelegate"/> to visit.</param>
     public void Visit(NRDelegate nrDelegate)
     {
       VisitAttributes(nrDelegate);
@@ -161,6 +166,10 @@ namespace NReflectRunner
       OutputLine("");
     }
 
+    /// <summary>
+    /// Visit a <see cref="NRStruct"/>.
+    /// </summary>
+    /// <param name="nrStruct">The <see cref="NRStruct"/> to visit.</param>
     public void Visit(NRStruct nrStruct)
     {
       VisitAttributes(nrStruct);
@@ -202,6 +211,10 @@ namespace NReflectRunner
       OutputLine("}");
     }
 
+    /// <summary>
+    /// Visit a <see cref="NREnum"/>.
+    /// </summary>
+    /// <param name="nrEnum">The <see cref="NREnum"/> to visit.</param>
     public void Visit(NREnum nrEnum)
     {
       VisitAttributes(nrEnum);
@@ -216,17 +229,25 @@ namespace NReflectRunner
       OutputLine("}");
     }
 
+    /// <summary>
+    /// Visit a <see cref="NRField"/>.
+    /// </summary>
+    /// <param name="nrField">The <see cref="NRField"/> to visit.</param>
     public void Visit(NRField nrField)
     {
       VisitAttributes(nrField);
       string value = "";
       if(nrField.IsConstant)
       {
-        value = ": " + nrField.InitialValue;
+        value = ": " + (nrField.InitialValue ?? "null");
       }
       OutputLine(ToString(nrField.AccessModifier) + ToString(nrField.FieldModifier) + ToString(nrField.Type) + " " + nrField.Name + value);
     }
 
+    /// <summary>
+    /// Visit a <see cref="NRProperty"/>.
+    /// </summary>
+    /// <param name="nrProperty">The <see cref="NRProperty"/> to visit.</param>
     public void Visit(NRProperty nrProperty)
     {
       VisitAttributes(nrProperty);
@@ -250,6 +271,10 @@ namespace NReflectRunner
       OutputLine(" { " + methods + "}", 0);
     }
 
+    /// <summary>
+    /// Visit a <see cref="NRMethod"/>.
+    /// </summary>
+    /// <param name="nrMethod">The <see cref="NRMethod"/> to visit.</param>
     public void Visit(NRMethod nrMethod)
     {
       VisitAttributes(nrMethod);
@@ -261,6 +286,10 @@ namespace NReflectRunner
       OutputLine("", 0);
     }
 
+    /// <summary>
+    /// Visit a <see cref="NROperator"/>.
+    /// </summary>
+    /// <param name="nrOperator">The <see cref="NROperator"/> to visit.</param>
     public void Visit(NROperator nrOperator)
     {
       VisitAttributes(nrOperator);
@@ -275,6 +304,10 @@ namespace NReflectRunner
       OutputLine(")", 0);
     }
 
+    /// <summary>
+    /// Visit a <see cref="NRConstructor"/>.
+    /// </summary>
+    /// <param name="nrConstructor">The <see cref="NRConstructor"/> to visit.</param>
     public void Visit(NRConstructor nrConstructor)
     {
       VisitAttributes(nrConstructor);
@@ -283,6 +316,10 @@ namespace NReflectRunner
       OutputLine(")", 0);
     }
 
+    /// <summary>
+    /// Visit a <see cref="NREvent"/>.
+    /// </summary>
+    /// <param name="nrEvent">The <see cref="NREvent"/> to visit.</param>
     public void Visit(NREvent nrEvent)
     {
       VisitAttributes(nrEvent);
@@ -291,6 +328,10 @@ namespace NReflectRunner
       OutputLine(")", 0);
     }
 
+    /// <summary>
+    /// Visit a <see cref="NRParameter"/>.
+    /// </summary>
+    /// <param name="nrParameter">The <see cref="NRParameter"/> to visit.</param>
     public void Visit(NRParameter nrParameter)
     {
       foreach(NRAttribute nrAttribute in nrParameter.Attributes)
@@ -304,6 +345,10 @@ namespace NReflectRunner
       }
     }
 
+    /// <summary>
+    /// Visit a <see cref="NRTypeParameter"/>.
+    /// </summary>
+    /// <param name="nrTypeParameter">The <see cref="NRTypeParameter"/> to visit.</param>
     public void Visit(NRTypeParameter nrTypeParameter)
     {
       if (!nrTypeParameter.IsStruct && !nrTypeParameter.IsClass && nrTypeParameter.BaseTypes.Count <= 0 && !nrTypeParameter.IsConstructor && !nrTypeParameter.IsIn && !nrTypeParameter.IsOut)
@@ -332,6 +377,10 @@ namespace NReflectRunner
       Output(result.ToString(), 0);
     }
 
+    /// <summary>
+    /// Visit a <see cref="NREnumValue"/>.
+    /// </summary>
+    /// <param name="nrEnumValue">The <see cref="NREnumValue"/> to visit.</param>
     public void Visit(NREnumValue nrEnumValue)
     {
       VisitAttributes(nrEnumValue);
@@ -343,11 +392,19 @@ namespace NReflectRunner
       OutputLine(nrEnumValue.Name + value + ",");
     }
 
+    /// <summary>
+    /// Visit a <see cref="NRAttribute"/>.
+    /// </summary>
+    /// <param name="nrAttribute">The <see cref="NRAttribute"/> to visit.</param>
     public void Visit(NRAttribute nrAttribute)
     {
       OutputLine(GetAttribute(nrAttribute));
     }
 
+    /// <summary>
+    /// Visit a <see cref="NRModule"/>.
+    /// </summary>
+    /// <param name="nrModule">The <see cref="NRModule"/> to visit.</param>
     public void Visit(NRModule nrModule)
     {
       OutputLine("Module: " + nrModule.Name);
@@ -492,26 +549,6 @@ namespace NReflectRunner
           Output(", ", 0);
         }
       }
-    }
-
-    private void Output(string text)
-    {
-      Output(text, indent);
-    }
-
-    private void Output(string text, int indention)
-    {
-      writer.Write("{0," + indention * 2 + "}{1}", "", text);
-    }
-
-    private void OutputLine(string text)
-    {
-      OutputLine(text, indent);
-    }
-
-    private void OutputLine(string text, int indention)
-    {
-      writer.WriteLine("{0," + indention * 2 + "}{1}", "", text);
     }
 
     /// <summary>

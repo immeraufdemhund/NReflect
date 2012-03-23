@@ -1,3 +1,8 @@
+Version 0.9.4 (not yet released)
+---------------------------
++ Added a visitor wich creates C#-Code
+# Improved the CSharp class
+
 Version 0.9.3 (03-Dec-2011)
 ---------------------------
 ! The interfaces an interface extend were not reflected - fixed

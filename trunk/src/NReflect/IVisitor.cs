@@ -85,8 +85,8 @@ namespace NReflect
     /// <summary>
     /// Visit a <see cref="NROperator"/>.
     /// </summary>
-    /// <param name="nrMethod">The <see cref="NROperator"/> to visit.</param>
-    void Visit(NROperator nrMethod);
+    /// <param name="nrOperator">The <see cref="NROperator"/> to visit.</param>
+    void Visit(NROperator nrOperator);
 
     /// <summary>
     /// Visit a <see cref="NRConstructor"/>.

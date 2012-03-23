@@ -129,10 +129,11 @@ namespace NReflectRunner
       }
 
       // Output of the results
-      PrintVisitor printVisitor = new PrintVisitor();
-      if(assembly)
+      IVisitor visitor = new CSharpVisitor();
+//      IVisitor visitor = new PrintVisitor();
+      if (assembly)
       {
-        nrAssembly.Accept(printVisitor);
+        nrAssembly.Accept(visitor);
         Console.WriteLine();
       }
 
@@ -140,7 +141,7 @@ namespace NReflectRunner
       {
         foreach (NRModule nrModule in nrAssembly.Modules)
         {
-          nrModule.Accept(printVisitor);
+          nrModule.Accept(visitor);
         }
         Console.WriteLine();
       }
