@@ -18,6 +18,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using NReflect.Modifier;
 using NReflect.NRAttributes;
@@ -33,6 +34,31 @@ namespace NReflect.NRCode
   /// </summary>
   public static class CSharp
   {
+    // ========================================================================
+    // Fields
+
+    #region === Fields
+
+    /// <summary>
+    /// A mapping of escaped characters.
+    /// </summary>
+    private static readonly Dictionary<string, string> EscapeChars = new Dictionary<string, string>
+                                                                     {
+                                                                       {"\\", @"\\"},
+                                                                       {"\"", "\\\""},
+                                                                       {"\'", "\\\'"},
+                                                                       {"\a", @"\a"},
+                                                                       {"\b", @"\b"},
+                                                                       {"\f", @"\f"},
+                                                                       {"\n", @"\n"},
+                                                                       {"\r", @"\r"},
+                                                                       {"\t", @"\t"},
+                                                                       {"\v", @"\v"},
+                                                                       {"\0", @"\0"},
+                                                                     };
+
+    #endregion
+
     // ========================================================================
     // Methods
 
@@ -157,9 +183,24 @@ namespace NReflect.NRCode
       string accessModifier = AddSpace(field.AccessModifier.Declaration());
       string modifier = AddSpace(field.FieldModifier.Declaration());
       string value = "";
-      if(!String.IsNullOrWhiteSpace(field.InitialValue) || field.IsConstant)
+      if (!String.IsNullOrWhiteSpace(field.InitialValue) || field.IsConstant)
       {
-        value = " = " + (field.InitialValue ?? "null");
+        if (field.InitialValue == null)
+        {
+          value = " = null";
+        }
+        else if (field.Type.Type == "String")
+        {
+          value = " = \"" + EscapeString(field.InitialValue) + "\"";
+        }
+        else if (field.Type.Type == "Char")
+        {
+          value = " = '" + EscapeString(field.InitialValue) + "'";
+        }
+        else
+        {
+          value = " = " + field.InitialValue;
+        }
       }
 
       return String.Format("{0}{1}{2} {3}{4}", accessModifier, modifier, field.Type.Declaration(), field.Name, value);
@@ -204,7 +245,7 @@ namespace NReflect.NRCode
       string accessModifier = AddSpace(nrOperator.AccessModifier.Declaration());
       string modifier = AddSpace(nrOperator.OperationModifier.Declaration());
       string returnType = "";
-      if(!nrOperator.Name.StartsWith("implicit") && !nrOperator.Name.StartsWith("explicit"))
+      if (!nrOperator.Name.StartsWith("implicit") && !nrOperator.Name.StartsWith("explicit"))
       {
         returnType = nrOperator.Type.Declaration() + " ";
       }
@@ -225,7 +266,7 @@ namespace NReflect.NRCode
       string parameter = "";
       string getter = "";
       string setter = "";
-      if(property.Parameters.Count > 0)
+      if (property.Parameters.Count > 0)
       {
         parameter = "[" + property.Parameters.Declaration() + "]";
       }
@@ -270,12 +311,12 @@ namespace NReflect.NRCode
     public static string Declaration(this IEnumerable<NRParameter> parameters)
     {
       StringBuilder result = new StringBuilder();
-      foreach(NRParameter nrParameter in parameters)
+      foreach (NRParameter nrParameter in parameters)
       {
         result.Append(nrParameter.Declaration());
         result.Append(", ");
       }
-      if(result.Length > 2)
+      if (result.Length > 2)
       {
         result.Length -= 2;
       }
@@ -313,7 +354,7 @@ namespace NReflect.NRCode
     /// <returns>The <see cref="OperationModifier"/> as a string.</returns>
     public static string Declaration(this OperationModifier modifier)
     {
-      if((modifier & OperationModifier.None) > 0)
+      if ((modifier & OperationModifier.None) > 0)
       {
         return "";
       }
@@ -486,6 +527,16 @@ namespace NReflect.NRCode
       result.Length -= 2;
 
       return result.ToString();
+    }
+
+    /// <summary>
+    /// Escapes a string value such it can be used as a literal.
+    /// </summary>
+    /// <param name="value">The string value to escape.</param>
+    /// <returns>The escaped string.</returns>
+    private static string EscapeString(string value)
+    {
+      return EscapeChars.Keys.Aggregate(value, (current, key) => current.Replace(key, EscapeChars[key]));
     }
 
     /// <summary>
