@@ -1,5 +1,5 @@
 // NReflect - Easy assembly reflection
-// Copyright (C) 2010-2011 Malte Ried
+// Copyright (C) 2010-2013 Malte Ried
 //
 // This file is part of NReflect.
 //
@@ -19,6 +19,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using NReflect;
 using NReflect.Modifier;
@@ -28,7 +29,7 @@ using NReflect.NRMembers;
 using NReflect.NRParameters;
 using ParameterModifier = NReflect.Modifier.ParameterModifier;
 
-namespace NReflectRunner
+namespace NReflect.Visitors
 {
   /// <summary>
   /// This class implements the <see cref="IVisitor"/> interface to print
@@ -115,10 +116,6 @@ namespace NReflectRunner
       {
         nrEvent.Accept(this);
       }
-      foreach (NRTypeBase nrTypeBase in nrClass.NestedTypes)
-      {
-        nrTypeBase.Accept(this);
-      }
       indent--;
       OutputLine("}");
     }
@@ -202,10 +199,6 @@ namespace NReflectRunner
       foreach (NREvent nrEvent in nrStruct.Events)
       {
         nrEvent.Accept(this);
-      }
-      foreach (NRTypeBase nrTypeBase in nrStruct.NestedTypes)
-      {
-        nrTypeBase.Accept(this);
       }
       indent--;
       OutputLine("}");
@@ -365,9 +358,9 @@ namespace NReflectRunner
       {
         result.Append(" class, ");
       }
-      foreach(string baseType in nrTypeParameter.BaseTypes)
+      foreach(NRTypeUsage baseType in nrTypeParameter.BaseTypes)
       {
-        result.Append(" " + baseType + ", ");
+        result.Append(" " + baseType.Name + ", ");
       }
       if(nrTypeParameter.IsConstructor)
       {
@@ -423,6 +416,15 @@ namespace NReflectRunner
     }
 
     /// <summary>
+    /// Visit a <see cref="NRTypeUsage"/>.
+    /// </summary>
+    /// <param name="nrTypeUsage">The <see cref="NRTypeUsage"/> to visit.</param>
+    public void Visit(NRTypeUsage nrTypeUsage)
+    {
+      // Do nothing
+    }
+
+    /// <summary>
     /// Visits all type parameters of the given <see cref="IGeneric"/>.
     /// </summary>
     /// <param name="generic">The type parameters of this <see cref="IGeneric"/>
@@ -474,11 +476,11 @@ namespace NReflectRunner
       Output(" : ");
       if(nrSingleInheritanceType.BaseType != null)
       {
-        Output(nrSingleInheritanceType.BaseType);
+        Output(ToString(nrSingleInheritanceType.BaseType));
       }
-      foreach(string implementedInterface in nrSingleInheritanceType.ImplementedInterfaces)
+      foreach(NRTypeUsage implementedInterface in nrSingleInheritanceType.ImplementedInterfaces)
       {
-        Output(", " + implementedInterface);
+        Output(", " + implementedInterface.Name);
       }
     }
 
@@ -494,9 +496,9 @@ namespace NReflectRunner
       }
       Output(" : ");
       StringBuilder result = new StringBuilder();
-      foreach (string implementedInterface in nrCompositeType.ImplementedInterfaces)
+      foreach(NRTypeUsage implementedInterface in nrCompositeType.ImplementedInterfaces)
       {
-        result.Append(implementedInterface + ", ");
+        result.Append(implementedInterface.Name + ", ");
       }
       result.Length -= 2;
       Output(result.ToString());
@@ -622,13 +624,45 @@ namespace NReflectRunner
     }
 
     /// <summary>
-    /// Returns a readable string containing the <see cref="NRType"/>.
+    /// Returns a readable string containing the <see cref="NRTypeUsage"/>.
     /// </summary>
-    /// <param name="nrType">The <see cref="NRType"/> to convert to a string.</param>
-    /// <returns>The converted <see cref="NRType"/></returns>
-    private string ToString(NRType nrType)
+    /// <param name="nrTypeUsage">The <see cref="NRTypeUsage"/> to convert to a string.</param>
+    /// <returns>The converted <see cref="NRTypeUsage"/></returns>
+    private string ToString(NRTypeUsage nrTypeUsage)
     {
-      return nrType.IsDynamic ? "dynamic" : nrType.Type;
+      if(nrTypeUsage.IsDynamic)
+      {
+        return "dynamic";
+      }
+
+      string declaration = "";
+      if(nrTypeUsage.DeclaringType != null)
+      {
+        declaration = ToString(nrTypeUsage.DeclaringType) + ".";
+      }
+      declaration += nrTypeUsage.Name;
+      if(nrTypeUsage.GenericParameters.Count > 0)
+      {
+        declaration += "<";
+        declaration = nrTypeUsage.GenericParameters.Aggregate(declaration, (current, genericParameter) => current + ToString(genericParameter) + ", ");
+        declaration = declaration.Substring(0, declaration.Length - 2);
+        declaration += ">";
+      }
+      if(nrTypeUsage.IsNullable)
+      {
+        declaration += "?";
+      }
+      foreach(int arrayRank in nrTypeUsage.ArrayRanks)
+      {
+        declaration += "[";
+        for (int i = 1; i < arrayRank; i++)
+        {
+          declaration += ",";
+        }
+        declaration += "]";
+      }
+
+      return declaration;
     }
 
     /// <summary>

@@ -1,4 +1,4 @@
-﻿// NReflect - Easy assembly reflection
+// NReflect - Easy assembly reflection
 // Copyright (C) 2010-2013 Malte Ried
 //
 // This file is part of NReflect.
@@ -18,15 +18,14 @@
 
 using System;
 using System.Collections.Generic;
-using NReflect.NRAttributes;
 
-namespace NReflect.NRParameters
+namespace NReflect
 {
   /// <summary>
-  /// Represents a type parameter which is reflected by NReflect.
+  /// Contains a reflected typeUsage.
   /// </summary>
   [Serializable]
-  public class NRTypeParameter : IVisitable, IAttributable
+  public class NRTypeUsage : IVisitable
   {
     // ========================================================================
     // Con- / Destruction
@@ -34,12 +33,12 @@ namespace NReflect.NRParameters
     #region === Con- / Destruction
 
     /// <summary>
-    /// Initializes a new instance of <see cref="NRTypeParameter"/>.
+    /// Initializes a new instance of <see cref="NRTypeUsage"/>.
     /// </summary>
-    public NRTypeParameter()
+    public NRTypeUsage()
     {
-      Attributes = new List<NRAttribute>();
-      BaseTypes = new List<NRTypeUsage>();
+      GenericParameters = new List<NRTypeUsage>();
+      ArrayRanks = new List<int>();
     }
 
     #endregion
@@ -50,44 +49,52 @@ namespace NReflect.NRParameters
     #region === Properties
 
     /// <summary>
-    /// Gets or sets the name of the type parameter.
+    /// Gets or sets the name of the type.
     /// </summary>
     public string Name { get; set; }
+    /// <summary>
+    /// Gets or sets the namespace of the used type.
+    /// </summary>
+    public string Namespace { get; set; }
+    /// <summary>
+    /// Gets or sets the full name of the used type.
+    /// </summary>
+    public string FullName { get; set; }
+    /// <summary>
+    /// Gets or sets the type which declares this type.
+    /// </summary>
+    public NRTypeUsage DeclaringType { get; set; }
+    /// <summary>
+    /// Gets a list of generic parameters of the type.
+    /// </summary>
+    public List<NRTypeUsage> GenericParameters { get; private set; }
+    /// <summary>
+    /// Gets a value indicating if the type is an array.
+    /// </summary>
+    public bool IsArray
+    {
+      get { return ArrayRanks.Count > 0; }
+    }
+    /// <summary>
+    /// Gets a list of array ranks of the type.
+    /// </summary>
+    public List<int> ArrayRanks { get; private set; }
 
     /// <summary>
-    /// Gets a list of types representing the constraints of the type parameter.
+    /// Gets or sets a value indicating whether the type is dynamic.
     /// </summary>
-    public List<NRTypeUsage> BaseTypes { get; private set; }
-
+    public bool IsDynamic { get; set; }
     /// <summary>
-    /// Gets or sets a value that indicates wether the generic parameter has a class constraint.
+    /// Gets or sets a value indicating whether the type is nullable.
     /// </summary>
-    public bool IsClass { get; set; }
-
+    public bool IsNullable { get; set; }
     /// <summary>
-    /// Gets or sets a value that indicates wether the generic parameter has a struct constraint.
+    /// Gets a value indicating if the type is a generic type.
     /// </summary>
-    public bool IsStruct { get; set; }
-
-    /// <summary>
-    /// Gets or sets a value that indicates wether the generic parameter has a default constructor constraint.
-    /// </summary>
-    public bool IsConstructor { get; set; }
-
-    /// <summary>
-    /// Gets or sets a value that indicates wether the generic parameter has a contravariant constraint.
-    /// </summary>
-    public bool IsIn { get; set; }
-
-    /// <summary>
-    /// Gets or sets a value that indicates wether the generic parameter has a covariant constraint.
-    /// </summary>
-    public bool IsOut { get; set; }
-
-    /// <summary>
-    /// Gets a list of attributes of the type parameter.
-    /// </summary>
-    public List<NRAttribute> Attributes { get; private set; }
+    public bool IsGeneric
+    {
+      get { return GenericParameters.Count > 0; }
+    }
 
     #endregion
 

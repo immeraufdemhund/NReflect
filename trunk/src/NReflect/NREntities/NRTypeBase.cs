@@ -1,5 +1,5 @@
 // NReflect - Easy assembly reflection
-// Copyright (C) 2010-2011 Malte Ried
+// Copyright (C) 2010-2013 Malte Ried
 //
 // This file is part of NReflect.
 //
@@ -55,6 +55,11 @@ namespace NReflect.NREntities
     public string Name { get; set; }
 
     /// <summary>
+    /// Gets or sets the namespace of this type.
+    /// </summary>
+    public string Namespace { get; set; }
+
+    /// <summary>
     /// Gets or sets the full name of this type.
     /// </summary>
     public string FullName { get; set; }
@@ -65,9 +70,9 @@ namespace NReflect.NREntities
     public AccessModifier AccessModifier { get; set; }
 
     /// <summary>
-    /// Gets or sets the type in which this type is nested.
+    /// Gets or sets the full full name of the type in which this type is nested.
     /// </summary>
-    public string Parent { get; set; }
+    public string DeclaringTypeFullName { get; set; }
 
     /// <summary>
     /// Gets a list of attributes of the type.

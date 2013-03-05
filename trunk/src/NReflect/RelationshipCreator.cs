@@ -1,5 +1,5 @@
 // NReflect - Easy assembly reflection
-// Copyright (C) 2010-2011 Malte Ried
+// Copyright (C) 2010-2013 Malte Ried
 //
 // This file is part of NReflect.
 //
@@ -56,11 +56,11 @@ namespace NReflect
       {
         foreach (NRTypeBase nrTypeBase in entities.Values)
         {
-          if (!String.IsNullOrWhiteSpace(nrTypeBase.Parent))
+          if (!String.IsNullOrWhiteSpace(nrTypeBase.DeclaringTypeFullName))
           {
-            if (entities.ContainsKey(nrTypeBase.Parent))
+            if (entities.ContainsKey(nrTypeBase.DeclaringTypeFullName))
             {
-              NRSingleInheritanceType parent = entities[nrTypeBase.Parent] as NRSingleInheritanceType;
+              NRSingleInheritanceType parent = entities[nrTypeBase.DeclaringTypeFullName] as NRSingleInheritanceType;
               if (parent != null)
               {
                 nrRelationships.Nestings.Add(new NRNesting(parent, nrTypeBase));
@@ -75,14 +75,30 @@ namespace NReflect
       {
         foreach (NRSingleInheritanceType derivedType in nrAssembly.SingleInheritanceTypes)
         {
-          if (!String.IsNullOrWhiteSpace(derivedType.BaseType))
+          if (derivedType.BaseType != null && derivedType.BaseType.FullName != null)
           {
-            if (entities.ContainsKey(derivedType.BaseType))
+            if (entities.ContainsKey(derivedType.BaseType.FullName))
             {
-              NRSingleInheritanceType baseType = entities[derivedType.BaseType] as NRSingleInheritanceType;
-              if (baseType != null)
+              NRSingleInheritanceType baseType = entities[derivedType.BaseType.FullName] as NRSingleInheritanceType;
+              if(baseType != null)
               {
                 nrRelationships.Generalizations.Add(new NRGeneralization(baseType, derivedType));
+              }
+            }
+          }
+        }
+
+        // Interfaces may derive from other interfaces as well.
+        foreach(NRInterface derivedInterface in nrAssembly.Interfaces)
+        {
+          foreach(NRTypeUsage implementedInterface in derivedInterface.ImplementedInterfaces)
+          {
+            if(entities.ContainsKey(implementedInterface.FullName))
+            {
+              NRInterface nrInterface = entities[implementedInterface.FullName] as NRInterface;
+              if(nrInterface != null)
+              {
+                nrRelationships.Generalizations.Add(new NRGeneralization(nrInterface, derivedInterface));
               }
             }
           }
@@ -94,11 +110,11 @@ namespace NReflect
       {
         foreach (NRSingleInheritanceType implementingType in nrAssembly.SingleInheritanceTypes)
         {
-          foreach (string implementedInterface in implementingType.ImplementedInterfaces)
+          foreach (NRTypeUsage implementedInterface in implementingType.ImplementedInterfaces)
           {
-            if (entities.ContainsKey(implementedInterface))
+            if (entities.ContainsKey(implementedInterface.FullName))
             {
-              NRInterface nrInterface = entities[implementedInterface] as NRInterface;
+              NRInterface nrInterface = entities[implementedInterface.FullName] as NRInterface;
               if (nrInterface != null)
               {
                 nrRelationships.Realizations.Add(new NRRealization(nrInterface, implementingType));

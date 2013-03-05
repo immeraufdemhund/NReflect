@@ -1,5 +1,5 @@
 ﻿// NReflect - Easy assembly reflection
-// Copyright (C) 2010-2011 Malte Ried
+// Copyright (C) 2010-2013 Malte Ried
 //
 // This file is part of NReflect.
 //
@@ -129,5 +129,11 @@ namespace NReflect
     /// </summary>
     /// <param name="nrModule">The <see cref="NRModule"/> to visit.</param>
     void Visit(NRModule nrModule);
+
+    /// <summary>
+    /// Visit a <see cref="NRTypeUsage"/>.
+    /// </summary>
+    /// <param name="nrTypeUsage">The <see cref="NRTypeUsage"/> to visit.</param>
+    void Visit(NRTypeUsage nrTypeUsage);
   }
 }

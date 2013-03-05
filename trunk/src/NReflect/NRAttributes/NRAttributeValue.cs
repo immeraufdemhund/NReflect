@@ -1,5 +1,5 @@
 ﻿// NReflect - Easy assembly reflection
-// Copyright (C) 2010-2011 Malte Ried
+// Copyright (C) 2010-2013 Malte Ried
 //
 // This file is part of NReflect.
 //

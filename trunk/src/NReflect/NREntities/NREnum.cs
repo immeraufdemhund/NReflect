@@ -1,5 +1,5 @@
 // NReflect - Easy assembly reflection
-// Copyright (C) 2010-2011 Malte Ried
+// Copyright (C) 2010-2013 Malte Ried
 //
 // This file is part of NReflect.
 //
@@ -52,6 +52,10 @@ namespace NReflect.NREntities
     /// Gets a list of values of this enum.
     /// </summary>
     public List<NREnumValue> Values { get; private set; }
+    /// <summary>
+    /// Gets or sets the underlying type of the enum.
+    /// </summary>
+    public string UnderlyingType { get; set; }
 
     #endregion
 

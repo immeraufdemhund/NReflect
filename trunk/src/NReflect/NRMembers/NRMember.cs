@@ -1,5 +1,5 @@
 // NReflect - Easy assembly reflection
-// Copyright (C) 2010-2011 Malte Ried
+// Copyright (C) 2010-2013 Malte Ried
 //
 // This file is part of NReflect.
 //
@@ -62,7 +62,7 @@ namespace NReflect.NRMembers
     /// <summary>
     /// Gets or sets the type of the member.
     /// </summary>
-    public NRType Type { get; set; }
+    public NRTypeUsage Type { get; set; }
 
     /// <summary>
     /// Gets or sets the full name of the type.

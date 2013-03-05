@@ -1,5 +1,5 @@
 // NReflect - Easy assembly reflection
-// Copyright (C) 2010-2011 Malte Ried
+// Copyright (C) 2010-2013 Malte Ried
 //
 // This file is part of NReflect.
 //
@@ -38,7 +38,7 @@ namespace NReflect.NREntities
     /// </summary>
     protected NRCompositeType()
     {
-      ImplementedInterfaces = new List<string>();
+      ImplementedInterfaces = new List<NRTypeUsage>();
       Properties = new List<NRProperty>();
       Events = new List<NREvent>();
       Methods = new List<NRMethod>();
@@ -54,7 +54,7 @@ namespace NReflect.NREntities
     /// <summary>
     /// Gets a list which contains the full names of all implemented interfaces.
     /// </summary>
-    public List<string> ImplementedInterfaces { get; private set; }
+    public List<NRTypeUsage> ImplementedInterfaces { get; private set; }
 
     /// <summary>
     /// Gets a list of properties of this type.

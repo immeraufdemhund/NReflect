@@ -1,5 +1,5 @@
 // NReflect - Easy assembly reflection
-// Copyright (C) 2010-2011 Malte Ried
+// Copyright (C) 2010-2013 Malte Ried
 //
 // This file is part of NReflect.
 //
@@ -108,6 +108,33 @@ namespace NReflect
                                             };
 
       return reflectionWorker.Reflect(fileName);
+    }
+
+    /// <summary>
+    /// Reflects the types of the provided assembly.
+    /// </summary>
+    /// <param name="assembly">The assembly to reflect.</param>
+    /// <returns>The result of the reflection.</returns>
+    public NRAssembly Reflect(Assembly assembly)
+    {
+      IFilter filter = null;
+      return Reflect(assembly, ref filter);
+    }
+
+    /// <summary>
+    /// Reflects the types of the provided assembly.
+    /// </summary>
+    /// <param name="assembly">The assembly to reflect.</param>
+    /// <param name="filter">The type filter used to determine which types to reflect.</param>
+    /// <returns>The result of the reflection.</returns>
+    public NRAssembly Reflect(Assembly assembly, ref IFilter filter)
+    {
+      ReflectionWorker reflectionWorker = new ReflectionWorker
+      {
+        Filter = Filter ?? new ReflectAllFilter()
+      };
+
+      return reflectionWorker.Reflect(assembly);
     }
 
     #endregion

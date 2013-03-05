@@ -1,5 +1,5 @@
 ﻿// NReflect - Easy assembly reflection
-// Copyright (C) 2010-2011 Malte Ried
+// Copyright (C) 2010-2013 Malte Ried
 //
 // This file is part of NReflect.
 //
@@ -52,6 +52,11 @@ namespace NReflect.NRAttributes
     /// Gets or sets the name of the attribute.
     /// </summary>
     public string Name { get; set; }
+
+    /// <summary>
+    /// Gets or sets the namespace of the attribute.
+    /// </summary>
+    public string Namespace { get; set; }
 
     /// <summary>
     /// Gets a list containing all positional values used to create the attribute.

@@ -37,7 +37,7 @@
       <Method Name="Accept" Hidden="true" />
     </Members>
     <TypeIdentifier>
-      <HashCode>AIAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAgAAAAAAA=</HashCode>
+      <HashCode>AIAAAAAAAAAAAAAAAAAAAAQQAAAAAAAAAAAgAAAAAAA=</HashCode>
       <FileName>NRMembers\NREnumValue.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -85,12 +85,13 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="NReflect.NRType">
-    <Position X="6.75" Y="5.5" Width="1.5" />
+  <Class Name="NReflect.NRTypeUsage">
+    <Position X="6.75" Y="5.5" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>ACAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAAAAAAA=</HashCode>
-      <FileName>NRType.cs</FileName>
+      <HashCode>AKAAAAAAAAABAAAAAAoAAAQAAAgAAAAAAAAAAAAAIAA=</HashCode>
+      <FileName>NRTypeUsage.cs</FileName>
     </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

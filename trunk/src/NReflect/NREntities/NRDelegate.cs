@@ -1,5 +1,5 @@
 // NReflect - Easy assembly reflection
-// Copyright (C) 2010-2011 Malte Ried
+// Copyright (C) 2010-2013 Malte Ried
 //
 // This file is part of NReflect.
 //
@@ -51,7 +51,7 @@ namespace NReflect.NREntities
     /// <summary>
     /// Gets or sets the return type of this delegate.
     /// </summary>
-    public NRType ReturnType { get; set; }
+    public NRTypeUsage ReturnType { get; set; }
 
     /// <summary>
     /// Gets a list of parameters of this delegate.

@@ -1,5 +1,5 @@
 ﻿// NReflect - Easy assembly reflection
-// Copyright (C) 2010-2011 Malte Ried
+// Copyright (C) 2010-2013 Malte Ried
 //
 // This file is part of NReflect.
 //
@@ -20,6 +20,7 @@ using System;
 using NReflect;
 using NReflect.Filter;
 using NReflect.NRRelationship;
+using NReflect.Visitors;
 
 namespace NReflectRunner
 {
@@ -129,7 +130,8 @@ namespace NReflectRunner
       }
 
       // Output of the results
-      IVisitor visitor = new CSharpVisitor();
+      IVisitor visitor = new PrintTreeVisitor();
+//      IVisitor visitor = new CSharpVisitor();
 //      IVisitor visitor = new PrintVisitor();
       if (assembly)
       {
@@ -200,6 +202,9 @@ namespace NReflectRunner
         Console.WriteLine("Attributes  : {0}/{1}", statisticFilter.ReflectedAttributes, statisticFilter.ReflectedAttributes + statisticFilter.IgnoredAttributes);
         Console.WriteLine("Modules     : {0}/{1}", statisticFilter.ReflectedModules, statisticFilter.ReflectedModules + statisticFilter.IgnoredModules);
       }
+
+      Console.WriteLine("Press any key to exit...");
+      Console.ReadKey(true);
     }
 
     /// <summary>

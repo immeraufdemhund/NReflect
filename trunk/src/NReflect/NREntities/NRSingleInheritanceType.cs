@@ -1,5 +1,5 @@
 // NReflect - Easy assembly reflection
-// Copyright (C) 2010-2011 Malte Ried
+// Copyright (C) 2010-2013 Malte Ried
 //
 // This file is part of NReflect.
 //
@@ -39,7 +39,6 @@ namespace NReflect.NREntities
     protected NRSingleInheritanceType()
     {
       Fields = new List<NRField>();
-      NestedTypes = new List<NRTypeBase>();
       Constructors = new List<NRConstructor>();
       Operators = new List<NROperator>();
     }
@@ -54,12 +53,7 @@ namespace NReflect.NREntities
     /// <summary>
     /// Gets or sets the full name of the base type of this type.
     /// </summary>
-    public string BaseType { get; set; }
-
-    /// <summary>
-    /// Gets a list of nested types.
-    /// </summary>
-    public List<NRTypeBase> NestedTypes { get; private set; }
+    public NRTypeUsage BaseType { get; set; }
 
     /// <summary>
     /// Gets a list of constructors.

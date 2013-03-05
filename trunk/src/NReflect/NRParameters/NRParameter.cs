@@ -1,5 +1,5 @@
 // NReflect - Easy assembly reflection
-// Copyright (C) 2010-2011 Malte Ried
+// Copyright (C) 2010-2013 Malte Ried
 //
 // This file is part of NReflect.
 //
@@ -57,7 +57,7 @@ namespace NReflect.NRParameters
     /// <summary>
     /// Gets or sets the type of the parameter.
     /// </summary>
-    public NRType Type { get; set; }
+    public NRTypeUsage Type { get; set; }
 
     /// <summary>
     /// Gets or sets the full name of the type.
@@ -79,6 +79,12 @@ namespace NReflect.NRParameters
     /// Gets a list of attributes of the parameter.
     /// </summary>
     public List<NRAttribute> Attributes { get; private set; }
+
+    /// <summary>
+    /// Gets or sets a value indicating if the parameter is the extension parameter
+    /// of an extension method.
+    /// </summary>
+    public bool IsExtensionParameter { get; set; }
 
     #endregion
 

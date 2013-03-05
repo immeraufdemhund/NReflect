@@ -1,5 +1,5 @@
 // NReflect - Easy assembly reflection
-// Copyright (C) 2010-2012 Malte Ried
+// Copyright (C) 2010-2013 Malte Ried
 //
 // This file is part of NReflect.
 //
@@ -18,7 +18,7 @@
 
 using System.IO;
 
-namespace NReflectRunner
+namespace NReflect.Visitors
 {
   public class VisitorBase
   {
@@ -51,7 +51,25 @@ namespace NReflectRunner
     {
       this.writer = writer;
       indent = 0;
+      IndentSize = 2;
+      IndentChar = ' ';
     }
+
+    #endregion
+
+    // ========================================================================
+    // Properties
+
+    #region === Properties
+
+    /// <summary>
+    /// Gets or sets a value defining th indention size.
+    /// </summary>
+    public int IndentSize { get; set; }
+    /// <summary>
+    /// Gets or sets the character used for indention.
+    /// </summary>
+    public char IndentChar { get; set; }
 
     #endregion
 
@@ -76,7 +94,7 @@ namespace NReflectRunner
     /// <param name="indention">The indention of the text.</param>
     protected void Output(string text, int indention)
     {
-      writer.Write("{0," + indention * 2 + "}{1}", "", text);
+      writer.Write("{0}{1}", new string(IndentChar, indention * IndentSize), text);
     }
 
     /// <summary>
@@ -97,7 +115,7 @@ namespace NReflectRunner
     /// <param name="indention">The indention of the text.</param>
     protected void OutputLine(string text, int indention)
     {
-      writer.WriteLine("{0," + indention * 2 + "}{1}", "", text);
+      writer.WriteLine("{0}{1}", new string(IndentChar, indention * IndentSize), text);
     }
 
     #endregion

@@ -1,5 +1,5 @@
 // NReflect - Easy assembly reflection
-// Copyright (C) 2010-2011 Malte Ried
+// Copyright (C) 2010-2013 Malte Ried
 //
 // This file is part of NReflect.
 //
@@ -26,6 +26,18 @@ namespace NReflect.NRMembers
   [Serializable]
   public class NROperator : NRReturnValueOperation
   {
+    // ========================================================================
+    // Properties
+
+    #region === Properties
+
+    /// <summary>
+    /// Gets or sets the <see cref="OperatorType"/> for the operator.
+    /// </summary>
+    public OperatorType OperatorType { get; set; }
+
+    #endregion
+
     // ========================================================================
     // Methods
 
