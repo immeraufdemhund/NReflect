@@ -51,7 +51,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\NReflectVisitors\NReflect.Visitors.csproj">
+    <ProjectReference Include="..\NReflect.Visitors\NReflect.Visitors.csproj">
       <Project>{B926C01D-6729-432C-9F0D-18B30FA2F607}</Project>
       <Name>NReflect.Visitors</Name>
     </ProjectReference>

@@ -1,6 +1,6 @@
 <Project>
   <Name>NReflect</Name>
-  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=2.4.1823.0, Culture=neutral, PublicKeyToken=null">
+  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <Name>Filter</Name>
     <Language>CSharp</Language>
     <Entities>
@@ -176,7 +176,7 @@
       </Relationship>
     </Relationships>
   </ProjectItem>
-  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=2.4.1823.0, Culture=neutral, PublicKeyToken=null">
+  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <Name>Visitor</Name>
     <Language>CSharp</Language>
     <Entities>
@@ -192,7 +192,7 @@
         <Name>IVisitor</Name>
         <Access>Public</Access>
         <Location left="249" top="23" />
-        <Size width="290" height="350" />
+        <Size width="290" height="367" />
         <Collapsed>False</Collapsed>
         <Member type="Method">Void Visit(NRAssembly nrAssembly)</Member>
         <Member type="Method">Void Visit(NRClass nrClass)</Member>
@@ -211,11 +211,12 @@
         <Member type="Method">Void Visit(NREnumValue nrEnumValue)</Member>
         <Member type="Method">Void Visit(NRAttribute nrAttribute)</Member>
         <Member type="Method">Void Visit(NRModule nrModule)</Member>
+        <Member type="Method">Void Visit(NRTypeUsage nrTypeUsage)</Member>
       </Entity>
     </Entities>
     <Relationships />
   </ProjectItem>
-  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=2.4.1823.0, Culture=neutral, PublicKeyToken=null">
+  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <Name>NReflect.dll</Name>
     <Language>CSharp</Language>
     <Entities>
@@ -1358,75 +1359,24 @@
       </Relationship>
     </Relationships>
   </ProjectItem>
-  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=2.4.1823.0, Culture=neutral, PublicKeyToken=null">
+  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <Name>Types</Name>
     <Language>CSharp</Language>
     <Entities>
       <Entity type="Class">
-        <Name>NRDelegate</Name>
-        <Access>Public</Access>
-        <Location left="832" top="431" />
-        <Size width="269" height="145" />
-        <Collapsed>False</Collapsed>
-        <Member type="Property">public NRType ReturnType { get; set; }</Member>
-        <Member type="Property">public List&lt;NRParameter&gt; Parameters { get; private set; }</Member>
-        <Member type="Constructor">public NRDelegate()</Member>
-        <Member type="Method">public override Void Accept(IVisitor visitor)</Member>
-        <Modifier>None</Modifier>
-      </Entity>
-      <Entity type="Class">
-        <Name>NRTypeBase</Name>
-        <Access>Public</Access>
-        <Location left="416" top="26" />
-        <Size width="306" height="179" />
-        <Collapsed>False</Collapsed>
-        <Member type="Property">public String Name { get; set; }</Member>
-        <Member type="Property">public String FullName { get; set; }</Member>
-        <Member type="Property">public AccessModifier AccessModifier { get; set; }</Member>
-        <Member type="Property">public String Parent { get; set; }</Member>
-        <Member type="Property">public List&lt;NRAttribute&gt; Attributes { get; private set; }</Member>
-        <Member type="Method">public abstract Void Accept(IVisitor visitor)</Member>
-        <Modifier>Abstract</Modifier>
-      </Entity>
-      <Entity type="Class">
         <Name>NRGenericType</Name>
         <Access>Public</Access>
         <Location left="416" top="262" />
-        <Size width="306" height="111" />
+        <Size width="335" height="111" />
         <Collapsed>False</Collapsed>
         <Member type="Property">public List&lt;NRTypeParameter&gt; GenericTypes { get; private set; }</Member>
         <Member type="Property">public Boolean IsGeneric { get; }</Member>
         <Modifier>Abstract</Modifier>
       </Entity>
       <Entity type="Class">
-        <Name>NRCompositeType</Name>
-        <Access>Public</Access>
-        <Location left="416" top="431" />
-        <Size width="306" height="145" />
-        <Collapsed>False</Collapsed>
-        <Member type="Property">public List&lt;String&gt; ImplementedInterfaces { get; private set; }</Member>
-        <Member type="Property">public List&lt;NRProperty&gt; Properties { get; private set; }</Member>
-        <Member type="Property">public List&lt;NREvent&gt; Events { get; private set; }</Member>
-        <Member type="Property">public List&lt;NRMethod&gt; Methods { get; private set; }</Member>
-        <Modifier>Abstract</Modifier>
-      </Entity>
-      <Entity type="Class">
-        <Name>NRSingleInheritanceType</Name>
-        <Access>Public</Access>
-        <Location left="416" top="632" />
-        <Size width="306" height="162" />
-        <Collapsed>False</Collapsed>
-        <Member type="Property">public String BaseType { get; set; }</Member>
-        <Member type="Property">public List&lt;NRTypeBase&gt; NestedTypes { get; private set; }</Member>
-        <Member type="Property">public List&lt;NRConstructor&gt; Constructors { get; private set; }</Member>
-        <Member type="Property">public List&lt;NROperator&gt; Operators { get; private set; }</Member>
-        <Member type="Property">public List&lt;NRField&gt; Fields { get; private set; }</Member>
-        <Modifier>Abstract</Modifier>
-      </Entity>
-      <Entity type="Class">
         <Name>NRInterface</Name>
         <Access>Public</Access>
-        <Location left="832" top="632" />
+        <Location left="832" top="670" />
         <Size width="269" height="111" />
         <Collapsed>False</Collapsed>
         <Member type="Constructor">public NRInterface()</Member>
@@ -1434,20 +1384,9 @@
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
-        <Name>NREnum</Name>
-        <Access>Public</Access>
-        <Location left="832" top="262" />
-        <Size width="269" height="128" />
-        <Collapsed>False</Collapsed>
-        <Member type="Property">public List&lt;NREnumValue&gt; Values { get; private set; }</Member>
-        <Member type="Constructor">public NREnum()</Member>
-        <Member type="Method">public override Void Accept(IVisitor visitor)</Member>
-        <Modifier>None</Modifier>
-      </Entity>
-      <Entity type="Class">
         <Name>NRClass</Name>
         <Access>Public</Access>
-        <Location left="832" top="854" />
+        <Location left="832" top="892" />
         <Size width="269" height="128" />
         <Collapsed>False</Collapsed>
         <Member type="Property">public ClassModifier ClassModifier { get; set; }</Member>
@@ -1458,106 +1397,113 @@
       <Entity type="Class">
         <Name>NRStruct</Name>
         <Access>Public</Access>
-        <Location left="1152" top="854" />
+        <Location left="1152" top="892" />
         <Size width="269" height="111" />
         <Collapsed>False</Collapsed>
         <Member type="Constructor">public NRStruct()</Member>
         <Member type="Method">public override Void Accept(IVisitor visitor)</Member>
         <Modifier>None</Modifier>
       </Entity>
+      <Entity type="Class">
+        <Name>NRDelegate</Name>
+        <Access>Public</Access>
+        <Location left="832" top="469" />
+        <Size width="269" height="145" />
+        <Collapsed>False</Collapsed>
+        <Member type="Property">public NRTypeUsage ReturnType { get; set; }</Member>
+        <Member type="Property">public List&lt;NRParameter&gt; Parameters { get; private set; }</Member>
+        <Member type="Constructor">public NRDelegate()</Member>
+        <Member type="Method">public override void Accept(IVisitor visitor)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>NRCompositeType</Name>
+        <Access>Public</Access>
+        <Location left="416" top="469" />
+        <Size width="335" height="145" />
+        <Collapsed>False</Collapsed>
+        <Member type="Property">public List&lt;NRTypeUsage&gt; ImplementedInterfaces { get; private set; }</Member>
+        <Member type="Property">public List&lt;NRProperty&gt; Properties { get; private set; }</Member>
+        <Member type="Property">public List&lt;NREvent&gt; Events { get; private set; }</Member>
+        <Member type="Property">public List&lt;NRMethod&gt; Methods { get; private set; }</Member>
+        <Modifier>Abstract</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>NRSingleInheritanceType</Name>
+        <Access>Public</Access>
+        <Location left="416" top="670" />
+        <Size width="335" height="145" />
+        <Collapsed>False</Collapsed>
+        <Member type="Property">public NRTypeUsage BaseType { get; set; }</Member>
+        <Member type="Property">public List&lt;NRConstructor&gt; Constructors { get; private set; }</Member>
+        <Member type="Property">public List&lt;NROperator&gt; Operators { get; private set; }</Member>
+        <Member type="Property">public List&lt;NRField&gt; Fields { get; private set; }</Member>
+        <Modifier>Abstract</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>NREnum</Name>
+        <Access>Public</Access>
+        <Location left="832" top="262" />
+        <Size width="269" height="145" />
+        <Collapsed>False</Collapsed>
+        <Member type="Property">public List&lt;NREnumValue&gt; Values { get; private set; }</Member>
+        <Member type="Property">public string UnderlyingType { get; set; }</Member>
+        <Member type="Constructor">public NREnum()</Member>
+        <Member type="Method">public override void Accept(IVisitor visitor)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>NRTypeBase</Name>
+        <Access>Public</Access>
+        <Location left="416" top="16" />
+        <Size width="335" height="196" />
+        <Collapsed>False</Collapsed>
+        <Member type="Property">public string Name { get; set; }</Member>
+        <Member type="Property">public string Namespace { get; set; }</Member>
+        <Member type="Property">public string FullName { get; set; }</Member>
+        <Member type="Property">public AccessModifier AccessModifier { get; set; }</Member>
+        <Member type="Property">public string DeclaringTypeFullName { get; set; }</Member>
+        <Member type="Property">public List&lt;NRAttribute&gt; Attributes { get; private set; }</Member>
+        <Member type="Method">public abstract void Accept(IVisitor visitor)</Member>
+        <Modifier>Abstract</Modifier>
+      </Entity>
     </Entities>
     <Relationships>
-      <Relationship type="Generalization" first="0" second="2">
+      <Relationship type="Generalization" first="0" second="8">
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
       </Relationship>
-      <Relationship type="Generalization" first="7" second="4">
+      <Relationship type="Generalization" first="5" second="0">
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
-        <BendPoint relativeToStartShape="True">
-          <X>956</X>
-          <Y>829</Y>
-        </BendPoint>
-        <BendPoint relativeToStartShape="False">
-          <X>563</X>
-          <Y>819</Y>
-        </BendPoint>
       </Relationship>
-      <Relationship type="Generalization" first="6" second="1">
+      <Relationship type="Generalization" first="6" second="5">
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
-        <BendPoint relativeToStartShape="True">
-          <X>957</X>
-          <Y>237</Y>
-        </BendPoint>
-        <BendPoint relativeToStartShape="False">
-          <X>564</X>
-          <Y>232</Y>
-        </BendPoint>
       </Relationship>
-      <Relationship type="Generalization" first="5" second="3">
+      <Relationship type="Generalization" first="7" second="8">
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
-        <BendPoint relativeToStartShape="True">
-          <X>962</X>
-          <Y>610</Y>
-        </BendPoint>
-        <BendPoint relativeToStartShape="False">
-          <X>567</X>
-          <Y>622</Y>
-        </BendPoint>
       </Relationship>
-      <Relationship type="Generalization" first="4" second="3">
+      <Relationship type="Generalization" first="4" second="0">
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
-        <BendPoint relativeToStartShape="True">
-          <X>567</X>
-          <Y>599</Y>
-        </BendPoint>
-        <BendPoint relativeToStartShape="False">
-          <X>567</X>
-          <Y>601</Y>
-        </BendPoint>
       </Relationship>
-      <Relationship type="Generalization" first="3" second="2">
+      <Relationship type="Generalization" first="1" second="5">
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
-        <BendPoint relativeToStartShape="True">
-          <X>569</X>
-          <Y>403</Y>
-        </BendPoint>
-        <BendPoint relativeToStartShape="False">
-          <X>569</X>
-          <Y>415</Y>
-        </BendPoint>
       </Relationship>
-      <Relationship type="Generalization" first="2" second="1">
+      <Relationship type="Generalization" first="2" second="6">
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
-        <BendPoint relativeToStartShape="True">
-          <X>564</X>
-          <Y>237</Y>
-        </BendPoint>
-        <BendPoint relativeToStartShape="False">
-          <X>564</X>
-          <Y>231</Y>
-        </BendPoint>
       </Relationship>
-      <Relationship type="Generalization" first="8" second="4">
+      <Relationship type="Generalization" first="3" second="6">
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
-        <BendPoint relativeToStartShape="True">
-          <X>1283</X>
-          <Y>829</Y>
-        </BendPoint>
-        <BendPoint relativeToStartShape="False">
-          <X>563</X>
-          <Y>819</Y>
-        </BendPoint>
       </Relationship>
     </Relationships>
   </ProjectItem>
-  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=2.4.1823.0, Culture=neutral, PublicKeyToken=null">
+  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <Name>Members</Name>
     <Language>CSharp</Language>
     <Entities>
@@ -1591,16 +1537,6 @@
         <Member type="Property">public List&lt;NRTypeParameter&gt; GenericTypes { get; private set; }</Member>
         <Member type="Property">public Boolean IsGeneric { get; }</Member>
         <Member type="Constructor">public NRMethod()</Member>
-        <Member type="Method">public override Void Accept(IVisitor visitor)</Member>
-        <Modifier>None</Modifier>
-      </Entity>
-      <Entity type="Class">
-        <Name>NROperator</Name>
-        <Access>Public</Access>
-        <Location left="477" top="776" />
-        <Size width="189" height="111" />
-        <Collapsed>False</Collapsed>
-        <Member type="Constructor">public NROperator()</Member>
         <Member type="Method">public override Void Accept(IVisitor visitor)</Member>
         <Modifier>None</Modifier>
       </Entity>
@@ -1654,7 +1590,7 @@
         <Collapsed>False</Collapsed>
         <Member type="Property">public AccessModifier AccessModifier { get; set; }</Member>
         <Member type="Property">public String Name { get; set; }</Member>
-        <Member type="Property">public NRType Type { get; set; }</Member>
+        <Member type="Property">public NRTypeUsage Type { get; set; }</Member>
         <Member type="Property">public String TypeFullName { get; set; }</Member>
         <Member type="Property">public List&lt;NRAttribute&gt; Attributes { get; private set; }</Member>
         <Member type="Method">public abstract Void Accept(IVisitor visitor)</Member>
@@ -1687,9 +1623,20 @@
         <Member type="Method">public Void Accept(IVisitor visitor)</Member>
         <Modifier>None</Modifier>
       </Entity>
+      <Entity type="Class">
+        <Name>NROperator</Name>
+        <Access>Public</Access>
+        <Location left="477" top="776" />
+        <Size width="252" height="128" />
+        <Collapsed>False</Collapsed>
+        <Member type="Property">public OperatorType OperatorType { get; set; }</Member>
+        <Member type="Constructor">public NROperator()</Member>
+        <Member type="Method">public override void Accept(IVisitor visitor)</Member>
+        <Modifier>None</Modifier>
+      </Entity>
     </Entities>
     <Relationships>
-      <Relationship type="Generalization" first="1" second="6">
+      <Relationship type="Generalization" first="1" second="5">
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <BendPoint relativeToStartShape="True">
@@ -1701,7 +1648,7 @@
           <Y>500</Y>
         </BendPoint>
       </Relationship>
-      <Relationship type="Generalization" first="2" second="5">
+      <Relationship type="Generalization" first="2" second="4">
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <BendPoint relativeToStartShape="False">
@@ -1709,27 +1656,19 @@
           <Y>673</Y>
         </BendPoint>
       </Relationship>
-      <Relationship type="Generalization" first="0" second="6">
+      <Relationship type="Generalization" first="0" second="5">
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
       </Relationship>
-      <Relationship type="Generalization" first="3" second="5">
-        <StartOrientation>Vertical</StartOrientation>
-        <EndOrientation>Vertical</EndOrientation>
-        <BendPoint relativeToStartShape="False">
-          <X>234</X>
-          <Y>749</Y>
-        </BendPoint>
-      </Relationship>
-      <Relationship type="Generalization" first="4" second="7">
+      <Relationship type="Generalization" first="3" second="6">
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
       </Relationship>
-      <Relationship type="Generalization" first="8" second="6">
+      <Relationship type="Generalization" first="7" second="5">
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
       </Relationship>
-      <Relationship type="Generalization" first="5" second="6">
+      <Relationship type="Generalization" first="4" second="5">
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <BendPoint relativeToStartShape="True">
@@ -1741,7 +1680,7 @@
           <Y>502</Y>
         </BendPoint>
       </Relationship>
-      <Relationship type="Generalization" first="6" second="7">
+      <Relationship type="Generalization" first="5" second="6">
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <BendPoint relativeToStartShape="True">
@@ -1753,9 +1692,17 @@
           <Y>236</Y>
         </BendPoint>
       </Relationship>
+      <Relationship type="Generalization" first="9" second="4">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="False">
+          <X>234</X>
+          <Y>748</Y>
+        </BendPoint>
+      </Relationship>
     </Relationships>
   </ProjectItem>
-  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=2.4.1823.0, Culture=neutral, PublicKeyToken=null">
+  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <Name>Generics</Name>
     <Language>CSharp</Language>
     <Entities>
@@ -1766,7 +1713,7 @@
         <Size width="280" height="247" />
         <Collapsed>False</Collapsed>
         <Member type="Property">public String Name { get; set; }</Member>
-        <Member type="Property">public List&lt;String&gt; BaseTypes { get; private set; }</Member>
+        <Member type="Property">public List&lt;NRTypeUsage&gt; BaseTypes { get; private set; }</Member>
         <Member type="Property">public Boolean IsClass { get; set; }</Member>
         <Member type="Property">public Boolean IsStruct { get; set; }</Member>
         <Member type="Property">public Boolean IsConstructor { get; set; }</Member>
@@ -1837,7 +1784,7 @@
       </Relationship>
     </Relationships>
   </ProjectItem>
-  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=2.4.1823.0, Culture=neutral, PublicKeyToken=null">
+  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <Name>Attributes</Name>
     <Language>CSharp</Language>
     <Entities>
@@ -2049,7 +1996,7 @@
       </Relationship>
     </Relationships>
   </ProjectItem>
-  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=2.4.1823.0, Culture=neutral, PublicKeyToken=null">
+  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
     <Name>AssemblyModule</Name>
     <Language>CSharp</Language>
     <Entities>

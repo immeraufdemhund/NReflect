@@ -42,7 +42,7 @@
           <title>Assembly</title>
           <content>
             <para>
-              When reflecting an assembly using <codeEntityReference qualifyHint="true">M:NReflect.Reflector.Reflect(System.String,NReflect.Filter.IFilter@,System.Boolean)</codeEntityReference>,
+              When reflecting an assembly using any <codeEntityReference qualifyHint="true" autoUpgrade="true">M:NReflect.Reflector.Reflect(System.Reflection.Assembly)</codeEntityReference>-Method,
               you will get an instance of <codeEntityReference qualifyHint="true">T:NReflect.NRAssembly</codeEntityReference>
               which is the root of the returned object tree.
             </para>
@@ -63,10 +63,12 @@
     </section>
     <section address="SecEntityContainer">
       <title>Entity container</title>
-      <para>
-        Since both assembly and module may contain entities, they are both implementing
-        the interface <codeEntityReference qualifyHint="true">T:NReflect.IEntityContainer</codeEntityReference>.
-      </para>
+      <content>
+        <para>
+          Since both assembly and module may contain entities, they are both implementing
+          the interface <codeEntityReference qualifyHint="true">T:NReflect.IEntityContainer</codeEntityReference>.
+        </para>
+      </content>
     </section>
     <relatedTopics>
       <link xlink:href="8f080f07-d44c-44ac-b883-a0993850d183"/>

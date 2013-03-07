@@ -1330,7 +1330,7 @@ namespace NReflect
       nrTypeUsage.ArrayRanks.AddRange(arrayRanks);
 
       // If we have a generic type, we have to recurse into the generic parameter.
-      if(type.IsGenericType)
+      if(type.GetGenericArguments().Length > 0)
       {
         for(int i = 0; i < type.GetGenericArguments().Length - declaringTypeGenericArgsCount; ++i)
         {
@@ -1358,15 +1358,6 @@ namespace NReflect
       {
         typeName = new StringBuilder(GetTypeName(type.GetElementType()));
       }
-      else if(type.IsGenericType)
-      {
-        if(typeName.ToString().LastIndexOf('`') > 0)
-        {
-          //Generics get names like "List`1"
-          typeName.Remove(typeName.ToString().LastIndexOf('`'),
-                          typeName.Length - typeName.ToString().LastIndexOf('`'));
-        }
-      }
       //openvenom - This part is especially added to handle ref Nullable<T> (ex: ref int32?)
       //kind method parameter types
       //To Malte Ried: Thank you very much for providing such a nice utility...
@@ -1377,6 +1368,15 @@ namespace NReflect
         typeName = new StringBuilder();
         typeName.Append(type.GetGenericArguments()[0].Name); //This gives us the Int32 part
         typeName.Append("?");
+      }
+      else if(type.GetGenericArguments().Length > 0)
+      {
+        if(typeName.ToString().LastIndexOf('`') > 0)
+        {
+          //Generics get names like "List`1"
+          typeName.Remove(typeName.ToString().LastIndexOf('`'),
+                          typeName.Length - typeName.ToString().LastIndexOf('`'));
+        }
       }
       return typeName.ToString();
     }
