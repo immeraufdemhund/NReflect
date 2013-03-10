@@ -7,6 +7,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NReflect.Runner", "NReflect
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NReflect.Visitors", "NReflect.Visitors\NReflect.Visitors.csproj", "{B926C01D-6729-432C-9F0D-18B30FA2F607}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NReflect.Studio", "NReflect.Studio\NReflect.Studio.csproj", "{7155A7BE-5650-409B-BC0C-D90F21BCCEC8}"
+EndProject
 Global
 	GlobalSection(SubversionScc) = preSolution
 		Svn-Managed = True
@@ -51,6 +53,16 @@ Global
 		{B926C01D-6729-432C-9F0D-18B30FA2F607}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
 		{B926C01D-6729-432C-9F0D-18B30FA2F607}.Release|Mixed Platforms.Build.0 = Release|Any CPU
 		{B926C01D-6729-432C-9F0D-18B30FA2F607}.Release|x86.ActiveCfg = Release|Any CPU
+		{7155A7BE-5650-409B-BC0C-D90F21BCCEC8}.Debug|Any CPU.ActiveCfg = Debug|x86
+		{7155A7BE-5650-409B-BC0C-D90F21BCCEC8}.Debug|Mixed Platforms.ActiveCfg = Debug|x86
+		{7155A7BE-5650-409B-BC0C-D90F21BCCEC8}.Debug|Mixed Platforms.Build.0 = Debug|x86
+		{7155A7BE-5650-409B-BC0C-D90F21BCCEC8}.Debug|x86.ActiveCfg = Debug|x86
+		{7155A7BE-5650-409B-BC0C-D90F21BCCEC8}.Debug|x86.Build.0 = Debug|x86
+		{7155A7BE-5650-409B-BC0C-D90F21BCCEC8}.Release|Any CPU.ActiveCfg = Release|x86
+		{7155A7BE-5650-409B-BC0C-D90F21BCCEC8}.Release|Mixed Platforms.ActiveCfg = Release|x86
+		{7155A7BE-5650-409B-BC0C-D90F21BCCEC8}.Release|Mixed Platforms.Build.0 = Release|x86
+		{7155A7BE-5650-409B-BC0C-D90F21BCCEC8}.Release|x86.ActiveCfg = Release|x86
+		{7155A7BE-5650-409B-BC0C-D90F21BCCEC8}.Release|x86.Build.0 = Release|x86
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
