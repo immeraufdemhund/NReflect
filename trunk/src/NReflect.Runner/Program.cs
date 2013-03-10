@@ -22,7 +22,7 @@ using NReflect.Filter;
 using NReflect.NRRelationship;
 using NReflect.Visitors;
 
-namespace NReflectRunner
+namespace NReflect.Runner
 {
   /// <summary>
   /// This is a simple example of the use of NReflect.

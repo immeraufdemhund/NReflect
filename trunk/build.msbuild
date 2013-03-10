@@ -2,7 +2,7 @@
   <Import Project="$(MSBuildExtensionsPath)\MSBuildCommunityTasks\MSBuild.Community.Tasks.Targets"/>
   
   <PropertyGroup>
-    <Version>0.9.3</Version>
+    <Version>0.9.4</Version>
 	<ExportDir>export</ExportDir>
 	<BinDir>bin</BinDir>
 	<SrcZip>NReflect_v$(Version)_src.zip</SrcZip>
@@ -32,7 +32,9 @@
   <!-- Build the project using the solution file -->
   <Target Name="Build">
     <MSBuild Projects ="$(MSBuildProjectFullPath)" Properties ="AssemblyInfoFile=src\NReflect\Properties\AssemblyInfo.cs" Targets="UpdateAssemblyInfo" />
-    <MSBuild Projects ="$(MSBuildProjectFullPath)" Properties ="AssemblyInfoFile=src\NReflectRunner\Properties\AssemblyInfo.cs" Targets="UpdateAssemblyInfo" />
+    <MSBuild Projects ="$(MSBuildProjectFullPath)" Properties ="AssemblyInfoFile=src\NReflect.Runner\Properties\AssemblyInfo.cs" Targets="UpdateAssemblyInfo" />
+    <MSBuild Projects ="$(MSBuildProjectFullPath)" Properties ="AssemblyInfoFile=src\NReflect.Studio\Properties\AssemblyInfo.cs" Targets="UpdateAssemblyInfo" />
+    <MSBuild Projects ="$(MSBuildProjectFullPath)" Properties ="AssemblyInfoFile=src\NReflect.Visitors\Properties\AssemblyInfo.cs" Targets="UpdateAssemblyInfo" />
 	<MSBuild Projects="@(ProjectToBuild)" />
   </Target>
   
@@ -58,12 +60,23 @@
   <Target Name="RebuildDocs" DependsOnTargets="CleanDocs;BuildDocs" />
 
   <!-- Create the binary distribution zip file -->  
-  <Target Name="CreateBinZip" DependsOnTargets="Rebuild;RebuildDocs">
+  <Target Name="CreateBinZip" DependsOnTargets="Rebuild;RebuildDocs;Export">
     <RemoveDir Directories="$(BinDir)" Condition="Exists('$(BinDir)')" />
     <MakeDir Directories="$(BinDir)" />
-    <Copy DestinationFolder="$(BinDir)" SourceFiles="src\NReflect\bin\Release\NReflect.dll;src\NReflectRunner\bin\Release\NReflectRunner.exe" />
+    <MakeDir Directories="$(BinDir)/bin" />
+    <Copy DestinationFolder="$(BinDir)/bin" SourceFiles="src\NReflect\bin\Release\NReflect.dll;src\NReflect.Runner\bin\Release\NReflect.Runner.exe;src\NReflect.Visitors\bin\Release\NReflect.Visitors.dll" />
     <Copy DestinationFolder="$(BinDir)" SourceFiles="src\NReflect\Help\NReflect.chm" />
     <Copy DestinationFolder="$(BinDir)" SourceFiles="@(DocFiles)" />
+	<ItemGroup>
+	  <NRStudioFiles Include="src\NReflect.Studio\bin\Release\*" Exclude="src\NReflect.Studio\bin\Release\*.pdb" />
+	  <NRTestCases Include="$(ExportDir)\NReflect.Studio\TestCases\**\*" />
+	</ItemGroup>
+    <MakeDir Directories="$(BinDir)/NReflect.Studio" />
+    <Copy DestinationFolder="$(BinDir)/NReflect.Studio" SourceFiles="@(NRStudioFiles)" />
+    <MakeDir Directories="$(BinDir)/NReflect.Studio/TestCases" />
+    <Copy DestinationFolder="$(BinDir)/NReflect.Studio/TestCases/%(RecursiveDir)" SourceFiles="@(NRTestCases)" />
+	
+	<!-- Create a ZIP file -->
     <ItemGroup>
 	  <BinFiles Include="$(BinDir)\**\*" />
     </ItemGroup>
@@ -83,10 +96,10 @@
   <!-- Do an svn export for the source distribution -->
   <Target Name="Export">
     <RemoveDir Directories="$(ExportDir)" Condition="Exists('$(ExportDir)')" />
-    <SvnExport RepositoryPath="https://nreflect.svn.sourceforge.net/svnroot/nreflect/trunk/doc/" 
+    <SvnExport RepositoryPath="https://svn.code.sf.net/p/nreflect/code/trunk/doc/" 
                LocalPath="$(ExportDir)">
     </SvnExport>
-    <SvnExport RepositoryPath="https://nreflect.svn.sourceforge.net/svnroot/nreflect/trunk/src/" 
+    <SvnExport RepositoryPath="https://svn.code.sf.net/p/nreflect/code/trunk/src/" 
                LocalPath="$(ExportDir)" Arguments="--force" >
       <Output TaskParameter="Revision" PropertyName="Revision" />
     </SvnExport>

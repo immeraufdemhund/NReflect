@@ -7,6 +7,7 @@ Version 0.9.4 (not yet released)
 + The first parameter of an extension method is marked as an extension parameter
 + Namespace of an attribute and every type is now also available
 + NRCode.CSharp is now configurable: Create attributes (yes/no), Use namespaces (yes/no) and Known namespaces
++ NReflect.Studio
 # Improved the CSharp class
 # Operators are now reflected language independent
 # Renamed NRType to NRTypeUsage to make the reason of the class more clearly

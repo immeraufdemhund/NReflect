@@ -8,8 +8,8 @@
     <ProjectGuid>{06AA28E6-B5ED-4EBE-B25F-E9301DE8FF5B}</ProjectGuid>
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>NReflectRunner</RootNamespace>
-    <AssemblyName>NReflectRunner</AssemblyName>
+    <RootNamespace>NReflect.Runner</RootNamespace>
+    <AssemblyName>NReflect.Runner</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <TargetFrameworkProfile>Client</TargetFrameworkProfile>
     <FileAlignment>512</FileAlignment>
