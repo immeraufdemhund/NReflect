@@ -1,7 +1,7 @@
 Version 0.9.4 (not yet released)
 ---------------------------
 + Reflector can now reflect an already loaded assembly
-+ Added a visitor wich creates C#-Code
++ Added a visitor which creates C#-Code
 + New project NReflect.Visitors which holds some generic printing visitors
 + The underlying type of an enum is now also reflected
 + The first parameter of an extension method is marked as an extension parameter
