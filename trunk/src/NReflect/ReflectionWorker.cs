@@ -1318,7 +1318,7 @@ namespace NReflect
                           IsNullable = nullable,
                           IsDynamic = isDynamic,
                           DeclaringType = declaringTypeUsage,
-                          FullName = type.FullName
+                          FullName = type.FullName ?? ((string.IsNullOrWhiteSpace(type.Namespace) ? "" : type.Namespace + ".") + type.Name)
                         };
       // Remove first dynamic flag if there is one
       if(dynamicAttributeData.Count > 0)
